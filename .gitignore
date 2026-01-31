@@ -1,0 +1,51 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE / Editor
+.vscode/
+*.code-workspace
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+**/Debug/
+**/Release/
+**/Objects/
+**/Listings/
+**/OBJ/
+**/bin/
+**/obj/
+
+# Temporary / logs
+*.log
+*.tmp
+*.bak
+*.old
+
+# Keil / MDK
+*.uvguix.*
+*.uvoptx
+*.uvprojx
+JLinkSettings.ini
+
+# Quartus / FPGA
+**/db/
+**/incremental_db/
+**/output_files/
+**/simulation/
+**/synthesis/
+
+# Altium Designer
+**/__Previews/
+**/History/
+**/Project Logs*/
+*.PcbDocPreview
+*.SchDocPreview
+
+# Generated archives
+*.zip
+*.rar
+*.7z
