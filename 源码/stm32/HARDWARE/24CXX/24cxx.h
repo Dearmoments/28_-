@@ -1,37 +1,37 @@
-#ifndef _24CXX_H
-#define _24CXX_H
-#include "sys.h"
-#include "myiic.h"
-//////////////////////////////////////////////////////////////////////////////////	 
-//±¾³ÌĞòÖ»¹©Ñ§Ï°Ê¹ÓÃ£¬Î´¾­×÷ÕßĞí¿É£¬²»µÃÓÃÓÚÆäËüÈÎºÎÓÃÍ¾
-//ALIENTEK STM32F407¿ª·¢°å
-//24CXX Çı¶¯´úÂë	   
-//ÕıµãÔ­×Ó@ALIENTEK
-//¼¼ÊõÂÛÌ³:www.openedv.com
-//´´½¨ÈÕÆÚ:2014/7/16
-//°æ±¾£ºV1.0
-//°æÈ¨ËùÓĞ£¬µÁ°æ±Ø¾¿¡£
-//Copyright(C) ¹ãÖİÊĞĞÇÒíµç×Ó¿Æ¼¼ÓĞÏŞ¹«Ë¾ 2014-2024
-//All rights reserved									  
-////////////////////////////////////////////////////////////////////////////////// 	
-#define AT24C01		127
-#define AT24C02		255
-#define AT24C04		511
-#define AT24C08		1023
-#define AT24C16		2047
-#define AT24C32		4095
-#define AT24C64	    8191
-#define AT24C128	16383
-#define AT24C256	32767  
-//STM32F4Ê¹ÓÃµÄÊÇ24C02ËùÒÔEE_TYPE¶¨ÒåÎªAT24C02
-#define EE_TYPE AT24C02
-
-void AT24CXX_Init(void);
-u8 AT24CXX_ReadOneByte(u16 ReadAddr);
-void AT24CXX_WriteOneByte(u16 WriteAddr,u8 DataToWrite);
-void AT24CXX_WriteLenByte(u16 WriteAddr,u32 DataToWrite,u8 Len);
-u32 AT24CXX_ReadLenByte(u16 ReadAddr,u8 Len);
-u8 AT24CXX_Check(void);
-void AT24CXX_Read(u16 ReadAddr,u8 *pBuffer,u16 NumToRead);
-void AT24CXX_Write(u16 WriteAddr,u8 *pBuffer,u16 NumToWrite);
-#endif
+#ifndef _24CXX_H
+#define _24CXX_H
+#include "sys.h"
+#include "myiic.h"
+//////////////////////////////////////////////////////////////////////////////////	 
+//æœ¬ç¨‹åºåªä¾›å­¦ä¹ ä½¿ç”¨ï¼Œæœªç»ä½œè€…è®¸å¯ï¼Œä¸å¾—ç”¨äºå…¶å®ƒä»»ä½•ç”¨é€”
+//ALIENTEK STM32F407å¼€å‘æ¿
+//24CXX é©±åŠ¨ä»£ç 	   
+//æ­£ç‚¹åŸå­@ALIENTEK
+//æŠ€æœ¯è®ºå›:www.openedv.com
+//åˆ›å»ºæ—¥æœŸ:2014/7/16
+//ç‰ˆæœ¬ï¼šV1.0
+//ç‰ˆæƒæ‰€æœ‰ï¼Œç›—ç‰ˆå¿…ç©¶ã€‚
+//Copyright(C) å¹¿å·å¸‚æ˜Ÿç¿¼ç”µå­ç§‘æŠ€æœ‰é™å…¬å¸ 2014-2024
+//All rights reserved									  
+////////////////////////////////////////////////////////////////////////////////// 	
+#define AT24C01		127
+#define AT24C02		255
+#define AT24C04		511
+#define AT24C08		1023
+#define AT24C16		2047
+#define AT24C32		4095
+#define AT24C64	    8191
+#define AT24C128	16383
+#define AT24C256	32767  
+//STM32F4ä½¿ç”¨çš„æ˜¯24C02æ‰€ä»¥EE_TYPEå®šä¹‰ä¸ºAT24C02
+#define EE_TYPE AT24C02
+
+void AT24CXX_Init(void);
+u8 AT24CXX_ReadOneByte(u16 ReadAddr);
+void AT24CXX_WriteOneByte(u16 WriteAddr,u8 DataToWrite);
+void AT24CXX_WriteLenByte(u16 WriteAddr,u32 DataToWrite,u8 Len);
+u32 AT24CXX_ReadLenByte(u16 ReadAddr,u8 Len);
+u8 AT24CXX_Check(void);
+void AT24CXX_Read(u16 ReadAddr,u8 *pBuffer,u16 NumToRead);
+void AT24CXX_Write(u16 WriteAddr,u8 *pBuffer,u16 NumToWrite);
+#endif

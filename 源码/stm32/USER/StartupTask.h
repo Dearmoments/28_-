@@ -1,23 +1,23 @@
-#ifndef __STARTUPTASK_H
-#define __STARTUPTASK_H
-
-#include "includes.h"
-#include "WM.h"
-
-#include "GUIExecTask.h"
-#include "UserMainTask.h"
-#include "TouchTask.h"
-
-/*ÈÎÎñÓÅÏÈ¼¶*/
-#define STARTUP_TASK_PRIO				3
-/*ÈÎÎñ¶ÑÕ»´óĞ¡*/
-#define STARTUP_TASK_STK_SIZE 				1024
-/*ÈÎÎñ¿ØÖÆ¿é*/
-extern OS_TCB StartupTaskTCB;
-
-/*ÈÎÎñ¶ÑÕ»*/
-extern CPU_STK START_TASK_STK[STARTUP_TASK_STK_SIZE];
-
-extern void StartupTask(void *p_arg);
-
-#endif
+#ifndef __STARTUPTASK_H
+#define __STARTUPTASK_H
+
+#include "includes.h"
+#include "WM.h"
+
+#include "GUIExecTask.h"
+#include "UserMainTask.h"
+#include "TouchTask.h"
+
+/*ä»»åŠ¡ä¼˜å…ˆçº§*/
+#define STARTUP_TASK_PRIO				3
+/*ä»»åŠ¡å †æ ˆå¤§å°*/
+#define STARTUP_TASK_STK_SIZE 				1024
+/*ä»»åŠ¡æ§åˆ¶å—*/
+extern OS_TCB StartupTaskTCB;
+
+/*ä»»åŠ¡å †æ ˆ*/
+extern CPU_STK START_TASK_STK[STARTUP_TASK_STK_SIZE];
+
+extern void StartupTask(void *p_arg);
+
+#endif

@@ -1,173 +1,173 @@
-#include "sram.h"
-#include "usart.h"
-//////////////////////////////////////////////////////////////////////////////////	 
-//±¾³ÌĞòÖ»¹©Ñ§Ï°Ê¹ÓÃ£¬Î´¾­×÷ÕßĞí¿É£¬²»µÃÓÃÓÚÆäËüÈÎºÎÓÃÍ¾
-//ALIENTEK STM32F407¿ª·¢°å
-//Íâ²¿SRAM Çı¶¯´úÂë	   
-//ÕıµãÔ­×Ó@ALIENTEK
-//¼¼ÊõÂÛÌ³:www.openedv.com
-//´´½¨ÈÕÆÚ:2014/5/14
-//°æ±¾£ºV1.0
-//°æÈ¨ËùÓĞ£¬µÁ°æ±Ø¾¿¡£
-//Copyright(C) ¹ãÖİÊĞĞÇÒíµç×Ó¿Æ¼¼ÓĞÏŞ¹«Ë¾ 2014-2024
-//All rights reserved									  
-////////////////////////////////////////////////////////////////////////////////// 	 
-
-
-//Ê¹ÓÃNOR/SRAMµÄ Bank1.sector3,µØÖ·Î»HADDR[27,26]=10 
-//¶ÔIS61LV25616/IS62WV25616,µØÖ·Ïß·¶Î§ÎªA0~A17 
-//¶ÔIS61LV51216/IS62WV51216,µØÖ·Ïß·¶Î§ÎªA0~A18
-
-#define Bank1_SRAM3_ADDR		(u32)(0x68000000)
-
-//³õÊ¼»¯Íâ²¿SRAM
-void FSMC_SRAM_Init(void)
-{
-	GPIO_InitTypeDef GPIO_InitStructure;
-	FSMC_NORSRAMInitTypeDef FSMC_NORSRAMInitStructure;
-	FSMC_NORSRAMTimingInitTypeDef FSMC_ReadWriteTimingStructure;
-	
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD|RCC_AHB1Periph_GPIOE|RCC_AHB1Periph_GPIOF|RCC_AHB1Periph_GPIOG,ENABLE); //Ê¹ÄÜPD,PE,PF,PGÊ±ÖÓ
-	
-	GPIO_InitStructure.GPIO_Pin =( GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_4|GPIO_Pin_5|GPIO_Pin_8|GPIO_Pin_9|GPIO_Pin_10 \
-																|GPIO_Pin_11|GPIO_Pin_12|GPIO_Pin_13|GPIO_Pin_14|GPIO_Pin_15); //PD0,1,4,5,8,9,10,11,12,13,14,15
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF; //¸´ÓÃÄ£Ê½
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz; //100MÊ±ÖÓ
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;  //ÍÆÍêÄ£Ê½
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP; //ÉÏÀ­
-	GPIO_Init(GPIOD,&GPIO_InitStructure);
-	
-	GPIO_InitStructure.GPIO_Pin = (GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_7|GPIO_Pin_8|GPIO_Pin_9|GPIO_Pin_10|GPIO_Pin_11 \
-																|GPIO_Pin_12|GPIO_Pin_13|GPIO_Pin_14|GPIO_Pin_15); //PE0,1,7,8,9,10,11,12,13,14,15
-	GPIO_Init(GPIOE,&GPIO_InitStructure);
-	
-	GPIO_InitStructure.GPIO_Pin = (GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_2|GPIO_Pin_3|GPIO_Pin_4|GPIO_Pin_5|GPIO_Pin_12 \
-																|GPIO_Pin_13|GPIO_Pin_14|GPIO_Pin_15); //PF0,1,2,3,4,5,12,13,14,15
-	GPIO_Init(GPIOF,&GPIO_InitStructure);
-	
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_2|GPIO_Pin_3|GPIO_Pin_4|GPIO_Pin_5|GPIO_Pin_10 ; //PG0,1,2,3,4,5,10
-	GPIO_Init(GPIOG,&GPIO_InitStructure);
-	
-	//GPIOD¸´ÓÃÅäÖÃ
-	GPIO_PinAFConfig(GPIOD,GPIO_PinSource0,GPIO_AF_FSMC);  //PD0
-	GPIO_PinAFConfig(GPIOD,GPIO_PinSource1,GPIO_AF_FSMC);  //PD1
-	GPIO_PinAFConfig(GPIOD,GPIO_PinSource4,GPIO_AF_FSMC);  //PD4
-	GPIO_PinAFConfig(GPIOD,GPIO_PinSource5,GPIO_AF_FSMC);  //PD5
-	GPIO_PinAFConfig(GPIOD,GPIO_PinSource8,GPIO_AF_FSMC);  //PD8
-	GPIO_PinAFConfig(GPIOD,GPIO_PinSource9,GPIO_AF_FSMC);  //PD9
-	GPIO_PinAFConfig(GPIOD,GPIO_PinSource10,GPIO_AF_FSMC); //PD10
-	GPIO_PinAFConfig(GPIOD,GPIO_PinSource11,GPIO_AF_FSMC); //PD11
-	GPIO_PinAFConfig(GPIOD,GPIO_PinSource12,GPIO_AF_FSMC); //PD12
-	GPIO_PinAFConfig(GPIOD,GPIO_PinSource13,GPIO_AF_FSMC); //PD13
-	GPIO_PinAFConfig(GPIOD,GPIO_PinSource14,GPIO_AF_FSMC); //PD14
-	GPIO_PinAFConfig(GPIOD,GPIO_PinSource15,GPIO_AF_FSMC); //PD15
-	
-	//GPIOE¸´ÓÃÅäÖÃ
-	GPIO_PinAFConfig(GPIOE,GPIO_PinSource0,GPIO_AF_FSMC);  //PE0
-	GPIO_PinAFConfig(GPIOE,GPIO_PinSource1,GPIO_AF_FSMC);  //PE1
-	GPIO_PinAFConfig(GPIOE,GPIO_PinSource7,GPIO_AF_FSMC);  //PE7
-	GPIO_PinAFConfig(GPIOE,GPIO_PinSource8,GPIO_AF_FSMC);  //PE8
-	GPIO_PinAFConfig(GPIOE,GPIO_PinSource9,GPIO_AF_FSMC);  //PE9
-	GPIO_PinAFConfig(GPIOE,GPIO_PinSource10,GPIO_AF_FSMC); //PE10
-	GPIO_PinAFConfig(GPIOE,GPIO_PinSource11,GPIO_AF_FSMC); //PE11
-	GPIO_PinAFConfig(GPIOE,GPIO_PinSource12,GPIO_AF_FSMC); //PE12
-	GPIO_PinAFConfig(GPIOE,GPIO_PinSource13,GPIO_AF_FSMC); //PE13
-	GPIO_PinAFConfig(GPIOE,GPIO_PinSource14,GPIO_AF_FSMC); //PE14
-	GPIO_PinAFConfig(GPIOE,GPIO_PinSource15,GPIO_AF_FSMC); //PE15
-	
-	//GPIOF¸´ÓÃÅäÖÃ
-	GPIO_PinAFConfig(GPIOF,GPIO_PinSource0,GPIO_AF_FSMC);  //PF0
-	GPIO_PinAFConfig(GPIOF,GPIO_PinSource1,GPIO_AF_FSMC);  //PF1
-	GPIO_PinAFConfig(GPIOF,GPIO_PinSource2,GPIO_AF_FSMC);  //PF2
-	GPIO_PinAFConfig(GPIOF,GPIO_PinSource3,GPIO_AF_FSMC);  //PF3
-	GPIO_PinAFConfig(GPIOF,GPIO_PinSource4,GPIO_AF_FSMC);  //PF4
-	GPIO_PinAFConfig(GPIOF,GPIO_PinSource5,GPIO_AF_FSMC);  //PF5
-	GPIO_PinAFConfig(GPIOF,GPIO_PinSource12,GPIO_AF_FSMC); //PF12
-	GPIO_PinAFConfig(GPIOF,GPIO_PinSource13,GPIO_AF_FSMC); //PF13
-	GPIO_PinAFConfig(GPIOF,GPIO_PinSource14,GPIO_AF_FSMC); //PF14
-	GPIO_PinAFConfig(GPIOF,GPIO_PinSource15,GPIO_AF_FSMC); //PF15
-	
-	//GPIOG¸´ÓÃÅäÖÃ
-	GPIO_PinAFConfig(GPIOG,GPIO_PinSource0,GPIO_AF_FSMC);  //PG0
-	GPIO_PinAFConfig(GPIOG,GPIO_PinSource1,GPIO_AF_FSMC);  //PG1
-	GPIO_PinAFConfig(GPIOG,GPIO_PinSource2,GPIO_AF_FSMC);  //PG2
-	GPIO_PinAFConfig(GPIOG,GPIO_PinSource3,GPIO_AF_FSMC);  //PG3
-	GPIO_PinAFConfig(GPIOG,GPIO_PinSource4,GPIO_AF_FSMC);  //PG4
-	GPIO_PinAFConfig(GPIOG,GPIO_PinSource5,GPIO_AF_FSMC);  //PG5
-	GPIO_PinAFConfig(GPIOG,GPIO_PinSource10,GPIO_AF_FSMC); //PG10
-	
-	FSMC_ReadWriteTimingStructure.FSMC_AddressSetupTime = 0X00; //µØÖ·½¨Á¢Ê±¼ä0¸öHCLK 0ns
-	FSMC_ReadWriteTimingStructure.FSMC_AddressHoldTime = 0x00;  //µØÖ·±£³ÖÊ±¼ä,Ä£Ê½AÎ´ÓÃµ½
-	FSMC_ReadWriteTimingStructure.FSMC_DataSetupTime = 0x09;    //Êı¾İ±£³ÖÊ±¼ä,9¸öHCLK£¬6*9=54ns
-	FSMC_ReadWriteTimingStructure.FSMC_BusTurnAroundDuration = 0x00;
-	FSMC_ReadWriteTimingStructure.FSMC_CLKDivision = 0x00;
-	FSMC_ReadWriteTimingStructure.FSMC_DataLatency = 0x00;
-	FSMC_ReadWriteTimingStructure.FSMC_AccessMode = FSMC_AccessMode_A; //Ä£Ê½A
-	
-	FSMC_NORSRAMInitStructure.FSMC_Bank = FSMC_Bank1_NORSRAM3;  //NOR/SRAMµÄBank3
-	FSMC_NORSRAMInitStructure.FSMC_DataAddressMux = FSMC_DataAddressMux_Disable; //Êı¾İºÍµØÖ·Ïß²»¸´ÓÃ
-	FSMC_NORSRAMInitStructure.FSMC_MemoryType = FSMC_MemoryType_SRAM; //SRAM´æ´¢Ä£Ê½
-	FSMC_NORSRAMInitStructure.FSMC_MemoryDataWidth = FSMC_MemoryDataWidth_16b; //16Î»Êı¾İ¿í¶È
-	FSMC_NORSRAMInitStructure.FSMC_BurstAccessMode = FSMC_BurstAccessMode_Disable; //FLASHÊ¹ÓÃµÄ,SRAMÎ´Ê¹ÓÃ
-	FSMC_NORSRAMInitStructure.FSMC_AsynchronousWait = FSMC_AsynchronousWait_Disable; //ÊÇ·ñÊ¹ÄÜÍ¬²½´«ÊäÄ£Ê½ÏÂµÄµÈ´ıĞÅºÅ,´Ë´¦Î´ÓÃµ½
-	FSMC_NORSRAMInitStructure.FSMC_WaitSignalPolarity = FSMC_WaitSignalPolarity_Low; //µÈ´ıĞÅºÅµÄ¼«ĞÔ,½öÔÚÍ»·¢Ä£Ê½·ÃÎÊÏÂÓĞÓÃ
-	FSMC_NORSRAMInitStructure.FSMC_WrapMode = FSMC_WrapMode_Disable;  //ÊÇ·ñÊ¹ÄÜ»·Â·Í»·¢Ä£Ê½,´Ë´¦Î´ÓÃµ½
-	FSMC_NORSRAMInitStructure.FSMC_WaitSignalActive = FSMC_WaitSignalActive_BeforeWaitState; //´æ´¢Æ÷ÊÇÔÚµÈ´ıÖÜÆÚÖ®Ç°µÄÒ»¸öÊ±ÖÓÖÜÆÚ»¹ÊÇµÈ´ıÖÜÆÚÆÚ¼äÊ¹ÄÜNWAIT
-	FSMC_NORSRAMInitStructure.FSMC_WriteOperation = FSMC_WriteOperation_Enable; //´æ´¢Æ÷Ğ´Ê¹ÄÜ
-	FSMC_NORSRAMInitStructure.FSMC_WaitSignal = FSMC_WaitSignal_Disable;   //µÈ´ıÊ¹ÄÜÎ»,´Ë´¦Î´ÓÃµ½
-	FSMC_NORSRAMInitStructure.FSMC_ExtendedMode = FSMC_ExtendedMode_Disable; //¶ÁĞ´Ê¹ÓÃÏàÍ¬µÄÊ±Ğò
-	FSMC_NORSRAMInitStructure.FSMC_WriteBurst = FSMC_WriteBurst_Disable;  //Òì²½´«ÊäÆÚ¼äµÄµÈ´ıĞÅºÅ
-	FSMC_NORSRAMInitStructure.FSMC_ReadWriteTimingStruct = &FSMC_ReadWriteTimingStructure;
-	FSMC_NORSRAMInitStructure.FSMC_WriteTimingStruct = &FSMC_ReadWriteTimingStructure;
-	FSMC_NORSRAMInit(&FSMC_NORSRAMInitStructure);  //FSMC_SRAM³õÊ¼»¯
-	
-	FSMC_NORSRAMCmd(FSMC_Bank1_NORSRAM3,ENABLE);  //Ê¹ÄÜNOR/SRAM¹¦ÄÜ
-}
-
-//ÔÚÖ¸¶¨µØÖ·(WriteAddr+Bank1_SRAM3_ADDR)¿ªÊ¼,Á¬ĞøĞ´Èën¸ö×Ö½Ú.
-//pBuffer:×Ö½ÚÖ¸Õë
-//WriteAddr:ÒªĞ´ÈëµÄµØÖ·
-//n:ÒªĞ´ÈëµÄ×Ö½ÚÊı
-void FSMC_SRAM_WriteBuffer(u8 *pBuffer,u32 WriteAddr,u32 n)
-{
-	for(;n!=0;n--)
-	{
-		*(vu8*)(Bank1_SRAM3_ADDR + WriteAddr) = *pBuffer; 
-		WriteAddr++;
-		pBuffer++;
-	}
-}
-
-//ÔÚÖ¸¶¨µØÖ·((WriteAddr+Bank1_SRAM3_ADDR))¿ªÊ¼,Á¬Ğø¶Á³ön¸ö×Ö½Ú.
-//pBuffer:×Ö½ÚÖ¸Õë
-//ReadAddr:Òª¶Á³öµÄÆğÊ¼µØÖ·
-//n:ÒªĞ´ÈëµÄ×Ö½ÚÊı
-void FSMC_SRAM_ReadBuffer(u8 *pBuffer,u32 ReadAddr,u32 n)
-{
-	for(;n!=0;n--)
-	{
-		*pBuffer ++=*(vu8*)(Bank1_SRAM3_ADDR + ReadAddr);
-		ReadAddr++;
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////////////
-//²âÊÔº¯Êı
-//ÔÚÖ¸¶¨µØÖ·Ğ´Èë1¸ö×Ö½Ú
-//addr:µØÖ·
-//data:ÒªĞ´ÈëµÄÊı¾İ
-void fsmc_sram_test_write(u32 addr,u8 data)
-{
-	FSMC_SRAM_WriteBuffer(&data,addr,1);//Ğ´ÈëÒ»¸ö×Ö½Ú
-}
-
-//¶ÁÈ¡1¸ö×Ö½Ú
-//addr:Òª¶ÁÈ¡µÄµØÖ·
-//·µ»ØÖµ:¶ÁÈ¡µ½µÄÊı¾İ
-u8 fsmc_sram_test_read(u32 addr)
-{
-	u8 data;
-	FSMC_SRAM_ReadBuffer(&data,addr,1);
-	return data;
-}
-
+#include "sram.h"
+#include "usart.h"
+//////////////////////////////////////////////////////////////////////////////////	 
+//æœ¬ç¨‹åºåªä¾›å­¦ä¹ ä½¿ç”¨ï¼Œæœªç»ä½œè€…è®¸å¯ï¼Œä¸å¾—ç”¨äºå…¶å®ƒä»»ä½•ç”¨é€”
+//ALIENTEK STM32F407å¼€å‘æ¿
+//å¤–éƒ¨SRAM é©±åŠ¨ä»£ç 	   
+//æ­£ç‚¹åŸå­@ALIENTEK
+//æŠ€æœ¯è®ºå›:www.openedv.com
+//åˆ›å»ºæ—¥æœŸ:2014/5/14
+//ç‰ˆæœ¬ï¼šV1.0
+//ç‰ˆæƒæ‰€æœ‰ï¼Œç›—ç‰ˆå¿…ç©¶ã€‚
+//Copyright(C) å¹¿å·å¸‚æ˜Ÿç¿¼ç”µå­ç§‘æŠ€æœ‰é™å…¬å¸ 2014-2024
+//All rights reserved									  
+////////////////////////////////////////////////////////////////////////////////// 	 
+
+
+//ä½¿ç”¨NOR/SRAMçš„ Bank1.sector3,åœ°å€ä½HADDR[27,26]=10 
+//å¯¹IS61LV25616/IS62WV25616,åœ°å€çº¿èŒƒå›´ä¸ºA0~A17 
+//å¯¹IS61LV51216/IS62WV51216,åœ°å€çº¿èŒƒå›´ä¸ºA0~A18
+
+#define Bank1_SRAM3_ADDR		(u32)(0x68000000)
+
+//åˆå§‹åŒ–å¤–éƒ¨SRAM
+void FSMC_SRAM_Init(void)
+{
+	GPIO_InitTypeDef GPIO_InitStructure;
+	FSMC_NORSRAMInitTypeDef FSMC_NORSRAMInitStructure;
+	FSMC_NORSRAMTimingInitTypeDef FSMC_ReadWriteTimingStructure;
+	
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD|RCC_AHB1Periph_GPIOE|RCC_AHB1Periph_GPIOF|RCC_AHB1Periph_GPIOG,ENABLE); //ä½¿èƒ½PD,PE,PF,PGæ—¶é’Ÿ
+	
+	GPIO_InitStructure.GPIO_Pin =( GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_4|GPIO_Pin_5|GPIO_Pin_8|GPIO_Pin_9|GPIO_Pin_10 \
+																|GPIO_Pin_11|GPIO_Pin_12|GPIO_Pin_13|GPIO_Pin_14|GPIO_Pin_15); //PD0,1,4,5,8,9,10,11,12,13,14,15
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF; //å¤ç”¨æ¨¡å¼
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz; //100Mæ—¶é’Ÿ
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;  //æ¨å®Œæ¨¡å¼
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP; //ä¸Šæ‹‰
+	GPIO_Init(GPIOD,&GPIO_InitStructure);
+	
+	GPIO_InitStructure.GPIO_Pin = (GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_7|GPIO_Pin_8|GPIO_Pin_9|GPIO_Pin_10|GPIO_Pin_11 \
+																|GPIO_Pin_12|GPIO_Pin_13|GPIO_Pin_14|GPIO_Pin_15); //PE0,1,7,8,9,10,11,12,13,14,15
+	GPIO_Init(GPIOE,&GPIO_InitStructure);
+	
+	GPIO_InitStructure.GPIO_Pin = (GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_2|GPIO_Pin_3|GPIO_Pin_4|GPIO_Pin_5|GPIO_Pin_12 \
+																|GPIO_Pin_13|GPIO_Pin_14|GPIO_Pin_15); //PF0,1,2,3,4,5,12,13,14,15
+	GPIO_Init(GPIOF,&GPIO_InitStructure);
+	
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_2|GPIO_Pin_3|GPIO_Pin_4|GPIO_Pin_5|GPIO_Pin_10 ; //PG0,1,2,3,4,5,10
+	GPIO_Init(GPIOG,&GPIO_InitStructure);
+	
+	//GPIODå¤ç”¨é…ç½®
+	GPIO_PinAFConfig(GPIOD,GPIO_PinSource0,GPIO_AF_FSMC);  //PD0
+	GPIO_PinAFConfig(GPIOD,GPIO_PinSource1,GPIO_AF_FSMC);  //PD1
+	GPIO_PinAFConfig(GPIOD,GPIO_PinSource4,GPIO_AF_FSMC);  //PD4
+	GPIO_PinAFConfig(GPIOD,GPIO_PinSource5,GPIO_AF_FSMC);  //PD5
+	GPIO_PinAFConfig(GPIOD,GPIO_PinSource8,GPIO_AF_FSMC);  //PD8
+	GPIO_PinAFConfig(GPIOD,GPIO_PinSource9,GPIO_AF_FSMC);  //PD9
+	GPIO_PinAFConfig(GPIOD,GPIO_PinSource10,GPIO_AF_FSMC); //PD10
+	GPIO_PinAFConfig(GPIOD,GPIO_PinSource11,GPIO_AF_FSMC); //PD11
+	GPIO_PinAFConfig(GPIOD,GPIO_PinSource12,GPIO_AF_FSMC); //PD12
+	GPIO_PinAFConfig(GPIOD,GPIO_PinSource13,GPIO_AF_FSMC); //PD13
+	GPIO_PinAFConfig(GPIOD,GPIO_PinSource14,GPIO_AF_FSMC); //PD14
+	GPIO_PinAFConfig(GPIOD,GPIO_PinSource15,GPIO_AF_FSMC); //PD15
+	
+	//GPIOEå¤ç”¨é…ç½®
+	GPIO_PinAFConfig(GPIOE,GPIO_PinSource0,GPIO_AF_FSMC);  //PE0
+	GPIO_PinAFConfig(GPIOE,GPIO_PinSource1,GPIO_AF_FSMC);  //PE1
+	GPIO_PinAFConfig(GPIOE,GPIO_PinSource7,GPIO_AF_FSMC);  //PE7
+	GPIO_PinAFConfig(GPIOE,GPIO_PinSource8,GPIO_AF_FSMC);  //PE8
+	GPIO_PinAFConfig(GPIOE,GPIO_PinSource9,GPIO_AF_FSMC);  //PE9
+	GPIO_PinAFConfig(GPIOE,GPIO_PinSource10,GPIO_AF_FSMC); //PE10
+	GPIO_PinAFConfig(GPIOE,GPIO_PinSource11,GPIO_AF_FSMC); //PE11
+	GPIO_PinAFConfig(GPIOE,GPIO_PinSource12,GPIO_AF_FSMC); //PE12
+	GPIO_PinAFConfig(GPIOE,GPIO_PinSource13,GPIO_AF_FSMC); //PE13
+	GPIO_PinAFConfig(GPIOE,GPIO_PinSource14,GPIO_AF_FSMC); //PE14
+	GPIO_PinAFConfig(GPIOE,GPIO_PinSource15,GPIO_AF_FSMC); //PE15
+	
+	//GPIOFå¤ç”¨é…ç½®
+	GPIO_PinAFConfig(GPIOF,GPIO_PinSource0,GPIO_AF_FSMC);  //PF0
+	GPIO_PinAFConfig(GPIOF,GPIO_PinSource1,GPIO_AF_FSMC);  //PF1
+	GPIO_PinAFConfig(GPIOF,GPIO_PinSource2,GPIO_AF_FSMC);  //PF2
+	GPIO_PinAFConfig(GPIOF,GPIO_PinSource3,GPIO_AF_FSMC);  //PF3
+	GPIO_PinAFConfig(GPIOF,GPIO_PinSource4,GPIO_AF_FSMC);  //PF4
+	GPIO_PinAFConfig(GPIOF,GPIO_PinSource5,GPIO_AF_FSMC);  //PF5
+	GPIO_PinAFConfig(GPIOF,GPIO_PinSource12,GPIO_AF_FSMC); //PF12
+	GPIO_PinAFConfig(GPIOF,GPIO_PinSource13,GPIO_AF_FSMC); //PF13
+	GPIO_PinAFConfig(GPIOF,GPIO_PinSource14,GPIO_AF_FSMC); //PF14
+	GPIO_PinAFConfig(GPIOF,GPIO_PinSource15,GPIO_AF_FSMC); //PF15
+	
+	//GPIOGå¤ç”¨é…ç½®
+	GPIO_PinAFConfig(GPIOG,GPIO_PinSource0,GPIO_AF_FSMC);  //PG0
+	GPIO_PinAFConfig(GPIOG,GPIO_PinSource1,GPIO_AF_FSMC);  //PG1
+	GPIO_PinAFConfig(GPIOG,GPIO_PinSource2,GPIO_AF_FSMC);  //PG2
+	GPIO_PinAFConfig(GPIOG,GPIO_PinSource3,GPIO_AF_FSMC);  //PG3
+	GPIO_PinAFConfig(GPIOG,GPIO_PinSource4,GPIO_AF_FSMC);  //PG4
+	GPIO_PinAFConfig(GPIOG,GPIO_PinSource5,GPIO_AF_FSMC);  //PG5
+	GPIO_PinAFConfig(GPIOG,GPIO_PinSource10,GPIO_AF_FSMC); //PG10
+	
+	FSMC_ReadWriteTimingStructure.FSMC_AddressSetupTime = 0X00; //åœ°å€å»ºç«‹æ—¶é—´0ä¸ªHCLK 0ns
+	FSMC_ReadWriteTimingStructure.FSMC_AddressHoldTime = 0x00;  //åœ°å€ä¿æŒæ—¶é—´,æ¨¡å¼Aæœªç”¨åˆ°
+	FSMC_ReadWriteTimingStructure.FSMC_DataSetupTime = 0x09;    //æ•°æ®ä¿æŒæ—¶é—´,9ä¸ªHCLKï¼Œ6*9=54ns
+	FSMC_ReadWriteTimingStructure.FSMC_BusTurnAroundDuration = 0x00;
+	FSMC_ReadWriteTimingStructure.FSMC_CLKDivision = 0x00;
+	FSMC_ReadWriteTimingStructure.FSMC_DataLatency = 0x00;
+	FSMC_ReadWriteTimingStructure.FSMC_AccessMode = FSMC_AccessMode_A; //æ¨¡å¼A
+	
+	FSMC_NORSRAMInitStructure.FSMC_Bank = FSMC_Bank1_NORSRAM3;  //NOR/SRAMçš„Bank3
+	FSMC_NORSRAMInitStructure.FSMC_DataAddressMux = FSMC_DataAddressMux_Disable; //æ•°æ®å’Œåœ°å€çº¿ä¸å¤ç”¨
+	FSMC_NORSRAMInitStructure.FSMC_MemoryType = FSMC_MemoryType_SRAM; //SRAMå­˜å‚¨æ¨¡å¼
+	FSMC_NORSRAMInitStructure.FSMC_MemoryDataWidth = FSMC_MemoryDataWidth_16b; //16ä½æ•°æ®å®½åº¦
+	FSMC_NORSRAMInitStructure.FSMC_BurstAccessMode = FSMC_BurstAccessMode_Disable; //FLASHä½¿ç”¨çš„,SRAMæœªä½¿ç”¨
+	FSMC_NORSRAMInitStructure.FSMC_AsynchronousWait = FSMC_AsynchronousWait_Disable; //æ˜¯å¦ä½¿èƒ½åŒæ­¥ä¼ è¾“æ¨¡å¼ä¸‹çš„ç­‰å¾…ä¿¡å·,æ­¤å¤„æœªç”¨åˆ°
+	FSMC_NORSRAMInitStructure.FSMC_WaitSignalPolarity = FSMC_WaitSignalPolarity_Low; //ç­‰å¾…ä¿¡å·çš„ææ€§,ä»…åœ¨çªå‘æ¨¡å¼è®¿é—®ä¸‹æœ‰ç”¨
+	FSMC_NORSRAMInitStructure.FSMC_WrapMode = FSMC_WrapMode_Disable;  //æ˜¯å¦ä½¿èƒ½ç¯è·¯çªå‘æ¨¡å¼,æ­¤å¤„æœªç”¨åˆ°
+	FSMC_NORSRAMInitStructure.FSMC_WaitSignalActive = FSMC_WaitSignalActive_BeforeWaitState; //å­˜å‚¨å™¨æ˜¯åœ¨ç­‰å¾…å‘¨æœŸä¹‹å‰çš„ä¸€ä¸ªæ—¶é’Ÿå‘¨æœŸè¿˜æ˜¯ç­‰å¾…å‘¨æœŸæœŸé—´ä½¿èƒ½NWAIT
+	FSMC_NORSRAMInitStructure.FSMC_WriteOperation = FSMC_WriteOperation_Enable; //å­˜å‚¨å™¨å†™ä½¿èƒ½
+	FSMC_NORSRAMInitStructure.FSMC_WaitSignal = FSMC_WaitSignal_Disable;   //ç­‰å¾…ä½¿èƒ½ä½,æ­¤å¤„æœªç”¨åˆ°
+	FSMC_NORSRAMInitStructure.FSMC_ExtendedMode = FSMC_ExtendedMode_Disable; //è¯»å†™ä½¿ç”¨ç›¸åŒçš„æ—¶åº
+	FSMC_NORSRAMInitStructure.FSMC_WriteBurst = FSMC_WriteBurst_Disable;  //å¼‚æ­¥ä¼ è¾“æœŸé—´çš„ç­‰å¾…ä¿¡å·
+	FSMC_NORSRAMInitStructure.FSMC_ReadWriteTimingStruct = &FSMC_ReadWriteTimingStructure;
+	FSMC_NORSRAMInitStructure.FSMC_WriteTimingStruct = &FSMC_ReadWriteTimingStructure;
+	FSMC_NORSRAMInit(&FSMC_NORSRAMInitStructure);  //FSMC_SRAMåˆå§‹åŒ–
+	
+	FSMC_NORSRAMCmd(FSMC_Bank1_NORSRAM3,ENABLE);  //ä½¿èƒ½NOR/SRAMåŠŸèƒ½
+}
+
+//åœ¨æŒ‡å®šåœ°å€(WriteAddr+Bank1_SRAM3_ADDR)å¼€å§‹,è¿ç»­å†™å…¥nä¸ªå­—èŠ‚.
+//pBuffer:å­—èŠ‚æŒ‡é’ˆ
+//WriteAddr:è¦å†™å…¥çš„åœ°å€
+//n:è¦å†™å…¥çš„å­—èŠ‚æ•°
+void FSMC_SRAM_WriteBuffer(u8 *pBuffer,u32 WriteAddr,u32 n)
+{
+	for(;n!=0;n--)
+	{
+		*(vu8*)(Bank1_SRAM3_ADDR + WriteAddr) = *pBuffer; 
+		WriteAddr++;
+		pBuffer++;
+	}
+}
+
+//åœ¨æŒ‡å®šåœ°å€((WriteAddr+Bank1_SRAM3_ADDR))å¼€å§‹,è¿ç»­è¯»å‡ºnä¸ªå­—èŠ‚.
+//pBuffer:å­—èŠ‚æŒ‡é’ˆ
+//ReadAddr:è¦è¯»å‡ºçš„èµ·å§‹åœ°å€
+//n:è¦å†™å…¥çš„å­—èŠ‚æ•°
+void FSMC_SRAM_ReadBuffer(u8 *pBuffer,u32 ReadAddr,u32 n)
+{
+	for(;n!=0;n--)
+	{
+		*pBuffer ++=*(vu8*)(Bank1_SRAM3_ADDR + ReadAddr);
+		ReadAddr++;
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+//æµ‹è¯•å‡½æ•°
+//åœ¨æŒ‡å®šåœ°å€å†™å…¥1ä¸ªå­—èŠ‚
+//addr:åœ°å€
+//data:è¦å†™å…¥çš„æ•°æ®
+void fsmc_sram_test_write(u32 addr,u8 data)
+{
+	FSMC_SRAM_WriteBuffer(&data,addr,1);//å†™å…¥ä¸€ä¸ªå­—èŠ‚
+}
+
+//è¯»å–1ä¸ªå­—èŠ‚
+//addr:è¦è¯»å–çš„åœ°å€
+//è¿”å›å€¼:è¯»å–åˆ°çš„æ•°æ®
+u8 fsmc_sram_test_read(u32 addr)
+{
+	u8 data;
+	FSMC_SRAM_ReadBuffer(&data,addr,1);
+	return data;
+}
+

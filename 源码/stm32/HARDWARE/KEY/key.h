@@ -1,30 +1,30 @@
-#ifndef _KEY_H
-#define _KEY_H
-#include "sys.h"
-
-//////////////////////////////////////////////////////////////////////////////////	 
-//±¾³ÌĞòÖ»¹©Ñ§Ï°Ê¹ÓÃ£¬Î´¾­×÷ÕßĞí¿É£¬²»µÃÓÃÓÚÆäËüÈÎºÎÓÃÍ¾
-//ALIENTEK STM32F407¿ª·¢°å
-//°´¼üÊäÈëÇı¶¯´úÂë	   
-//ÕıµãÔ­×Ó@ALIENTEK
-//¼¼ÊõÂÛÌ³:www.openedv.com
-//´´½¨ÈÕÆÚ:2014/5/3
-//°æ±¾£ºV1.0
-//°æÈ¨ËùÓĞ£¬µÁ°æ±Ø¾¿¡£
-//Copyright(C) ¹ãÖİÊĞĞÇÒíµç×Ó¿Æ¼¼ÓĞÏŞ¹«Ë¾ 2014-2024
-//All rights reserved									  
-////////////////////////////////////////////////////////////////////////////////// 	
-
-#define KEY0	PEin(4)	//PE4
-#define KEY1	PEin(3) //PE3
-#define KEY2	PEin(2) //PE2
-#define WK_UP	PAin(0) //PA0
-
-#define KEY0_PRES	1
-#define KEY1_PRES 2
-#define KEY2_PRES	3
-#define WKUP_PRES	4
-
-void KEY_Init(void);  //IO³õÊ¼»¯
-u8 KEY_Scan(u8);    //°´¼üÉ¨Ãèº¯Êı
-#endif 
+#ifndef _KEY_H
+#define _KEY_H
+#include "sys.h"
+
+//////////////////////////////////////////////////////////////////////////////////	 
+//æœ¬ç¨‹åºåªä¾›å­¦ä¹ ä½¿ç”¨ï¼Œæœªç»ä½œè€…è®¸å¯ï¼Œä¸å¾—ç”¨äºå…¶å®ƒä»»ä½•ç”¨é€”
+//ALIENTEK STM32F407å¼€å‘æ¿
+//æŒ‰é”®è¾“å…¥é©±åŠ¨ä»£ç 	   
+//æ­£ç‚¹åŸå­@ALIENTEK
+//æŠ€æœ¯è®ºå›:www.openedv.com
+//åˆ›å»ºæ—¥æœŸ:2014/5/3
+//ç‰ˆæœ¬ï¼šV1.0
+//ç‰ˆæƒæ‰€æœ‰ï¼Œç›—ç‰ˆå¿…ç©¶ã€‚
+//Copyright(C) å¹¿å·å¸‚æ˜Ÿç¿¼ç”µå­ç§‘æŠ€æœ‰é™å…¬å¸ 2014-2024
+//All rights reserved									  
+////////////////////////////////////////////////////////////////////////////////// 	
+
+#define KEY0	PEin(4)	//PE4
+#define KEY1	PEin(3) //PE3
+#define KEY2	PEin(2) //PE2
+#define WK_UP	PAin(0) //PA0
+
+#define KEY0_PRES	1
+#define KEY1_PRES 2
+#define KEY2_PRES	3
+#define WKUP_PRES	4
+
+void KEY_Init(void);  //IOåˆå§‹åŒ–
+u8 KEY_Scan(u8);    //æŒ‰é”®æ‰«æå‡½æ•°
+#endif 

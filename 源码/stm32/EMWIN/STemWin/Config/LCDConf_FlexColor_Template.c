@@ -1,118 +1,118 @@
-#include "GUI.h"
-#include "ILI93xx.h"
-#include "touch.h"
-#include "GUIDRV_Template.h"
-#include "GUIDRV_FlexColor.h"
-
-//Óë´¥ÃşÆÁÓĞ¹Ø¶¨Òå£¬¸ù¾İÊµ¼ÊÇé¿öÌîĞ´
-#define TOUCH_AD_TOP		160  	//°´ÏÂ´¥ÃşÆÁµÄ¶¥²¿£¬Ğ´ÏÂ Y ÖáÄ£ÄâÊäÈëÖµ¡£
-#define TOUCH_AD_BOTTOM		3990 	//°´ÏÂ´¥ÃşÆÁµÄµ×²¿£¬Ğ´ÏÂ Y ÖáÄ£ÄâÊäÈëÖµ¡£
-#define TOUCH_AD_LEFT 		160		//°´ÏÂ´¥ÃşÆÁµÄ×ó²à£¬Ğ´ÏÂ X ÖáÄ£ÄâÊäÈëÖµ¡£
-#define TOUCH_AD_RIGHT		3990	//°´ÏÂ´¥ÃşÆÁµÄÓÒ²à£¬Ğ´ÏÂ X ÖáÄ£ÄâÊäÈëÖµ¡£
-
-
-//ÆÁÄ»´óĞ¡
-#define XSIZE_PHYS  320 //XÖá
-#define YSIZE_PHYS  240 //YÖá
-#define VXSIZE_PHYS	320 
-#define VYSIZE_PHYS 240
-
-
-
-//ÅäÖÃ¼ì²é
-#ifndef   VXSIZE_PHYS
-  #define VXSIZE_PHYS XSIZE_PHYS
-#endif
-#ifndef   VYSIZE_PHYS
-  #define VYSIZE_PHYS YSIZE_PHYS
-#endif
-#ifndef   XSIZE_PHYS
-  #error Physical X size of display is not defined!
-#endif
-#ifndef   YSIZE_PHYS
-  #error Physical Y size of display is not defined!
-#endif
-#ifndef   GUICC_565
-  #error Color conversion not defined!
-#endif
-#ifndef   GUIDRV_FLEXCOLOR
-  #error No display driver defined!
-#endif
-
-  
-
-//ÅäÖÃ³ÌĞò,ÓÃÓÚ´´½¨ÏÔÊ¾Çı¶¯Æ÷¼ş,ÉèÖÃÑÕÉ«×ª»»³ÌĞòºÍÏÔÊ¾³ß´ç
-void LCD_X_Config(void) {
-	GUI_DEVICE_CreateAndLink(&GUIDRV_Template_API, GUICC_M565, 0, 0); //´´½¨ÏÔÊ¾Çı¶¯Æ÷¼ş
-	LCD_SetSizeEx    (0, lcddev.width, lcddev.height);
-	LCD_SetVSizeEx   (0, lcddev.width, lcddev.height);
-	if(lcddev.id == 0X5510) //0X5510Îª4.3´ç 800x480µÄÆÁ
-	{
-		if(lcddev.dir == 0) //ÊúÆÁ  // 2001:3520 6352
-			{					    // 9147:3832 6288
-			GUI_TOUCH_Calibrate(GUI_COORD_X,0,480,0,479);
-			GUI_TOUCH_Calibrate(GUI_COORD_Y,0,800,0,799);
-		}else //ºáÆÁ
-		{
-			//GUI_TOUCH_SetOrientation(GUI_SWAP_XY|GUI_MIRROR_Y); 
-			GUI_TOUCH_Calibrate(GUI_COORD_X,0,480,0,479); 		
-			GUI_TOUCH_Calibrate(GUI_COORD_Y,0,800,0,799);
-		}
-	}else if(lcddev.id == 0X1963)//1963Îª7´çÆÁ 800*480 
-	{
-		if(lcddev.dir == 0) //ÊúÆÁ
-		{					// 6368 3816
-			//GUI_TOUCH_SetOrientation(GUI_SWAP_XY|GUI_MIRROR_Y); 
-			GUI_TOUCH_Calibrate(GUI_COORD_X,0,800,0,799); 		
-			GUI_TOUCH_Calibrate(GUI_COORD_Y,0,480,0,479);
-		}else //ºáÆÁ
-		{
-			GUI_TOUCH_Calibrate(GUI_COORD_X,0,800,0,799); 		
-			GUI_TOUCH_Calibrate(GUI_COORD_Y,0,480,0,479);
-		}
-	}else if(lcddev.id == 0X5310 || lcddev.id == 0X6804) //0X5510 0X6804Îª3.5´ç 320x480
-	{
-		if(lcddev.dir == 0) //ÊúÆÁ 	
-		{							
-			GUI_TOUCH_Calibrate(GUI_COORD_X,0,320,3931,226);
-			GUI_TOUCH_Calibrate(GUI_COORD_Y,0,480,3812,196);
-		}else //ºáÆÁ
-		{
-			GUI_TOUCH_SetOrientation(GUI_SWAP_XY|GUI_MIRROR_Y); 
-			GUI_TOUCH_Calibrate(GUI_COORD_X,0,320,3931,226);
-			GUI_TOUCH_Calibrate(GUI_COORD_Y,0,480,3812,196); 	
-		}
-	}
-	else             //ÆäËûÆÁÄ»È«²¿Ä¬ÈÏÎª2.8´ç 320X240
-	{
-		if(lcddev.dir == 0) //ÊúÆÁ
-		{					
-			GUI_TOUCH_Calibrate(GUI_COORD_X,0,lcddev.width,155,3903);
-			GUI_TOUCH_Calibrate(GUI_COORD_Y,0,lcddev.height,188,3935);
-		}else //ºáÆÁ
-		{
-			GUI_TOUCH_SetOrientation(GUI_SWAP_XY|GUI_MIRROR_Y); 
-			GUI_TOUCH_Calibrate(GUI_COORD_X,0,240,155,3903); 	
-			GUI_TOUCH_Calibrate(GUI_COORD_Y,0,320,188,3935);
-		}
-	}
-}
-
-//ÏÔÊ¾Æ÷Çı¶¯µÄ»Øµ÷º¯Êı
-int LCD_X_DisplayDriver(unsigned LayerIndex, unsigned Cmd, void * pData) {
-  int r;
-  (void) LayerIndex;
-  (void) pData;
-  
-  switch (Cmd) {
-  case LCD_X_INITCONTROLLER: {
-	//µ±³õÊ¼»¯µÄÊ±ºò±»µ÷ÓÃ,Ö÷ÒªÊÇÉèÖÃÏÔÊ¾¿ØÖÆÆ÷,Èç¹ûÏÔÊ¾¿ØÖÆÆ÷ÔÚÍâ²¿³õÊ¼»¯ÔòĞèÒªÓÃ»§³õÊ¼»¯
-		
-	//	TFTLCD_Init(); //³õÊ¼»¯LCD ÒÑ¾­ÔÚ¿ªÊ¼³õÊ¼»¯ÁË,ËùÒÔ´Ë´¦²»ĞèÒª³õÊ¼»¯¡£
-    return 0;
-  }
-		default:
-    r = -1;
-	}
-  return r;
-}
+#include "GUI.h"
+#include "ILI93xx.h"
+#include "touch.h"
+#include "GUIDRV_Template.h"
+#include "GUIDRV_FlexColor.h"
+
+//ä¸è§¦æ‘¸å±æœ‰å…³å®šä¹‰ï¼Œæ ¹æ®å®é™…æƒ…å†µå¡«å†™
+#define TOUCH_AD_TOP		160  	//æŒ‰ä¸‹è§¦æ‘¸å±çš„é¡¶éƒ¨ï¼Œå†™ä¸‹ Y è½´æ¨¡æ‹Ÿè¾“å…¥å€¼ã€‚
+#define TOUCH_AD_BOTTOM		3990 	//æŒ‰ä¸‹è§¦æ‘¸å±çš„åº•éƒ¨ï¼Œå†™ä¸‹ Y è½´æ¨¡æ‹Ÿè¾“å…¥å€¼ã€‚
+#define TOUCH_AD_LEFT 		160		//æŒ‰ä¸‹è§¦æ‘¸å±çš„å·¦ä¾§ï¼Œå†™ä¸‹ X è½´æ¨¡æ‹Ÿè¾“å…¥å€¼ã€‚
+#define TOUCH_AD_RIGHT		3990	//æŒ‰ä¸‹è§¦æ‘¸å±çš„å³ä¾§ï¼Œå†™ä¸‹ X è½´æ¨¡æ‹Ÿè¾“å…¥å€¼ã€‚
+
+
+//å±å¹•å¤§å°
+#define XSIZE_PHYS  320 //Xè½´
+#define YSIZE_PHYS  240 //Yè½´
+#define VXSIZE_PHYS	320 
+#define VYSIZE_PHYS 240
+
+
+
+//é…ç½®æ£€æŸ¥
+#ifndef   VXSIZE_PHYS
+  #define VXSIZE_PHYS XSIZE_PHYS
+#endif
+#ifndef   VYSIZE_PHYS
+  #define VYSIZE_PHYS YSIZE_PHYS
+#endif
+#ifndef   XSIZE_PHYS
+  #error Physical X size of display is not defined!
+#endif
+#ifndef   YSIZE_PHYS
+  #error Physical Y size of display is not defined!
+#endif
+#ifndef   GUICC_565
+  #error Color conversion not defined!
+#endif
+#ifndef   GUIDRV_FLEXCOLOR
+  #error No display driver defined!
+#endif
+
+  
+
+//é…ç½®ç¨‹åº,ç”¨äºåˆ›å»ºæ˜¾ç¤ºé©±åŠ¨å™¨ä»¶,è®¾ç½®é¢œè‰²è½¬æ¢ç¨‹åºå’Œæ˜¾ç¤ºå°ºå¯¸
+void LCD_X_Config(void) {
+	GUI_DEVICE_CreateAndLink(&GUIDRV_Template_API, GUICC_M565, 0, 0); //åˆ›å»ºæ˜¾ç¤ºé©±åŠ¨å™¨ä»¶
+	LCD_SetSizeEx    (0, lcddev.width, lcddev.height);
+	LCD_SetVSizeEx   (0, lcddev.width, lcddev.height);
+	if(lcddev.id == 0X5510) //0X5510ä¸º4.3å¯¸ 800x480çš„å±
+	{
+		if(lcddev.dir == 0) //ç«–å±  // 2001:3520 6352
+			{					    // 9147:3832 6288
+			GUI_TOUCH_Calibrate(GUI_COORD_X,0,480,0,479);
+			GUI_TOUCH_Calibrate(GUI_COORD_Y,0,800,0,799);
+		}else //æ¨ªå±
+		{
+			//GUI_TOUCH_SetOrientation(GUI_SWAP_XY|GUI_MIRROR_Y); 
+			GUI_TOUCH_Calibrate(GUI_COORD_X,0,480,0,479); 		
+			GUI_TOUCH_Calibrate(GUI_COORD_Y,0,800,0,799);
+		}
+	}else if(lcddev.id == 0X1963)//1963ä¸º7å¯¸å± 800*480 
+	{
+		if(lcddev.dir == 0) //ç«–å±
+		{					// 6368 3816
+			//GUI_TOUCH_SetOrientation(GUI_SWAP_XY|GUI_MIRROR_Y); 
+			GUI_TOUCH_Calibrate(GUI_COORD_X,0,800,0,799); 		
+			GUI_TOUCH_Calibrate(GUI_COORD_Y,0,480,0,479);
+		}else //æ¨ªå±
+		{
+			GUI_TOUCH_Calibrate(GUI_COORD_X,0,800,0,799); 		
+			GUI_TOUCH_Calibrate(GUI_COORD_Y,0,480,0,479);
+		}
+	}else if(lcddev.id == 0X5310 || lcddev.id == 0X6804) //0X5510 0X6804ä¸º3.5å¯¸ 320x480
+	{
+		if(lcddev.dir == 0) //ç«–å± 	
+		{							
+			GUI_TOUCH_Calibrate(GUI_COORD_X,0,320,3931,226);
+			GUI_TOUCH_Calibrate(GUI_COORD_Y,0,480,3812,196);
+		}else //æ¨ªå±
+		{
+			GUI_TOUCH_SetOrientation(GUI_SWAP_XY|GUI_MIRROR_Y); 
+			GUI_TOUCH_Calibrate(GUI_COORD_X,0,320,3931,226);
+			GUI_TOUCH_Calibrate(GUI_COORD_Y,0,480,3812,196); 	
+		}
+	}
+	else             //å…¶ä»–å±å¹•å…¨éƒ¨é»˜è®¤ä¸º2.8å¯¸ 320X240
+	{
+		if(lcddev.dir == 0) //ç«–å±
+		{					
+			GUI_TOUCH_Calibrate(GUI_COORD_X,0,lcddev.width,155,3903);
+			GUI_TOUCH_Calibrate(GUI_COORD_Y,0,lcddev.height,188,3935);
+		}else //æ¨ªå±
+		{
+			GUI_TOUCH_SetOrientation(GUI_SWAP_XY|GUI_MIRROR_Y); 
+			GUI_TOUCH_Calibrate(GUI_COORD_X,0,240,155,3903); 	
+			GUI_TOUCH_Calibrate(GUI_COORD_Y,0,320,188,3935);
+		}
+	}
+}
+
+//æ˜¾ç¤ºå™¨é©±åŠ¨çš„å›è°ƒå‡½æ•°
+int LCD_X_DisplayDriver(unsigned LayerIndex, unsigned Cmd, void * pData) {
+  int r;
+  (void) LayerIndex;
+  (void) pData;
+  
+  switch (Cmd) {
+  case LCD_X_INITCONTROLLER: {
+	//å½“åˆå§‹åŒ–çš„æ—¶å€™è¢«è°ƒç”¨,ä¸»è¦æ˜¯è®¾ç½®æ˜¾ç¤ºæ§åˆ¶å™¨,å¦‚æœæ˜¾ç¤ºæ§åˆ¶å™¨åœ¨å¤–éƒ¨åˆå§‹åŒ–åˆ™éœ€è¦ç”¨æˆ·åˆå§‹åŒ–
+		
+	//	TFTLCD_Init(); //åˆå§‹åŒ–LCD å·²ç»åœ¨å¼€å§‹åˆå§‹åŒ–äº†,æ‰€ä»¥æ­¤å¤„ä¸éœ€è¦åˆå§‹åŒ–ã€‚
+    return 0;
+  }
+		default:
+    r = -1;
+	}
+  return r;
+}

@@ -1,31 +1,31 @@
-#include "led.h"
-//////////////////////////////////////////////////////////////////////////////////	 
-//±¾³ÌĞòÖ»¹©Ñ§Ï°Ê¹ÓÃ£¬Î´¾­×÷ÕßĞí¿É£¬²»µÃÓÃÓÚÆäËüÈÎºÎÓÃÍ¾
-//ALIENTEK STM32F407¿ª·¢°å
-//LEDÇı¶¯´úÂë	   
-//ÕıµãÔ­×Ó@ALIENTEK
-//¼¼ÊõÂÛÌ³:www.openedv.com
-//´´½¨ÈÕÆÚ:2014/6/10
-//°æ±¾£ºV1.0
-//°æÈ¨ËùÓĞ£¬µÁ°æ±Ø¾¿¡£
-//Copyright(C) ¹ãÖİÊĞĞÇÒíµç×Ó¿Æ¼¼ÓĞÏŞ¹«Ë¾ 2014-2024
-//All rights reserved									  
-////////////////////////////////////////////////////////////////////////////////// 	
-
-//³õÊ¼»¯PF9ºÍPF10ÎªÊä³ö¿Ú.²¢Ê¹ÄÜÕâÁ½¸ö¿ÚµÄÊ±ÖÓ		    
-//LED IO³õÊ¼»¯
-void LED_Init(void)
-{
-	GPIO_InitTypeDef GPIO_InitStructure;
-	
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOF,ENABLE); //Ê¹ÄÜGPIODµÄÊ±ÖÓ
-	
-	GPIO_InitStructure.GPIO_Pin=GPIO_Pin_9|GPIO_Pin_10;
-	GPIO_InitStructure.GPIO_Mode=GPIO_Mode_OUT;//Êä³ö
-	GPIO_InitStructure.GPIO_OType=GPIO_OType_PP;  //ÍÆÍìÊä³ö
-	GPIO_InitStructure.GPIO_PuPd=GPIO_PuPd_NOPULL;  //ÉÏÀ­Êä³ö
-	GPIO_InitStructure.GPIO_Speed=GPIO_Speed_100MHz; //¸ßËÙGPIO
-	GPIO_Init(GPIOF,&GPIO_InitStructure);
-	
-	GPIO_SetBits(GPIOF,GPIO_Pin_9|GPIO_Pin_10); //GPIOF ¸ßµçÆ½
-}
+#include "led.h"
+//////////////////////////////////////////////////////////////////////////////////	 
+//æœ¬ç¨‹åºåªä¾›å­¦ä¹ ä½¿ç”¨ï¼Œæœªç»ä½œè€…è®¸å¯ï¼Œä¸å¾—ç”¨äºå…¶å®ƒä»»ä½•ç”¨é€”
+//ALIENTEK STM32F407å¼€å‘æ¿
+//LEDé©±åŠ¨ä»£ç 	   
+//æ­£ç‚¹åŸå­@ALIENTEK
+//æŠ€æœ¯è®ºå›:www.openedv.com
+//åˆ›å»ºæ—¥æœŸ:2014/6/10
+//ç‰ˆæœ¬ï¼šV1.0
+//ç‰ˆæƒæ‰€æœ‰ï¼Œç›—ç‰ˆå¿…ç©¶ã€‚
+//Copyright(C) å¹¿å·å¸‚æ˜Ÿç¿¼ç”µå­ç§‘æŠ€æœ‰é™å…¬å¸ 2014-2024
+//All rights reserved									  
+////////////////////////////////////////////////////////////////////////////////// 	
+
+//åˆå§‹åŒ–PF9å’ŒPF10ä¸ºè¾“å‡ºå£.å¹¶ä½¿èƒ½è¿™ä¸¤ä¸ªå£çš„æ—¶é’Ÿ		    
+//LED IOåˆå§‹åŒ–
+void LED_Init(void)
+{
+	GPIO_InitTypeDef GPIO_InitStructure;
+	
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOF,ENABLE); //ä½¿èƒ½GPIODçš„æ—¶é’Ÿ
+	
+	GPIO_InitStructure.GPIO_Pin=GPIO_Pin_9|GPIO_Pin_10;
+	GPIO_InitStructure.GPIO_Mode=GPIO_Mode_OUT;//è¾“å‡º
+	GPIO_InitStructure.GPIO_OType=GPIO_OType_PP;  //æ¨æŒ½è¾“å‡º
+	GPIO_InitStructure.GPIO_PuPd=GPIO_PuPd_NOPULL;  //ä¸Šæ‹‰è¾“å‡º
+	GPIO_InitStructure.GPIO_Speed=GPIO_Speed_100MHz; //é«˜é€ŸGPIO
+	GPIO_Init(GPIOF,&GPIO_InitStructure);
+	
+	GPIO_SetBits(GPIOF,GPIO_Pin_9|GPIO_Pin_10); //GPIOF é«˜ç”µå¹³
+}

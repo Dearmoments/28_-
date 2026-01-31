@@ -1,22 +1,22 @@
-#include "TouchTask.h"
-
-/***ÈÎÎñ¿ØÖÆ¿é******************************************************/
-CPU_STK TOUCH_TASK_STK[GUIEXEC_TASK_STK_SIZE];
-OS_TCB 	TouchTaskTCB;
-
-/********************************************************************
-º¯ÊıÔ­ĞÍ:TouchTask(void *arg)
-¹¦ÄÜ:´¥Ãş´¦Àí
-ÊäÈë²ÎÊı:
-  void *arg:ÈÎÎñ²ÎÊı,±£ÁôÎ´ÓÃ
-·µ»ØÖµ:ÎŞ
-*******************************************************************/
-void TouchTask(void *arg)
-{
-  OS_ERR err;
-	while(1)
-  {
-    GUI_TOUCH_Exec();
-    OSTimeDlyHMSM(0,0,0,5,OS_OPT_TIME_PERIODIC,&err);//ÑÓÊ±5ms
-  }
-}
+#include "TouchTask.h"
+
+/***ä»»åŠ¡æ§åˆ¶å—******************************************************/
+CPU_STK TOUCH_TASK_STK[GUIEXEC_TASK_STK_SIZE];
+OS_TCB 	TouchTaskTCB;
+
+/********************************************************************
+å‡½æ•°åŸå‹:TouchTask(void *arg)
+åŠŸèƒ½:è§¦æ‘¸å¤„ç†
+è¾“å…¥å‚æ•°:
+  void *arg:ä»»åŠ¡å‚æ•°,ä¿ç•™æœªç”¨
+è¿”å›å€¼:æ— 
+*******************************************************************/
+void TouchTask(void *arg)
+{
+  OS_ERR err;
+	while(1)
+  {
+    GUI_TOUCH_Exec();
+    OSTimeDlyHMSM(0,0,0,5,OS_OPT_TIME_PERIODIC,&err);//å»¶æ—¶5ms
+  }
+}

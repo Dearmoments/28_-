@@ -1,193 +1,193 @@
-#include "GUI.h"
-#include "includes.h" //“ÚŒ™ π”√UCOSÀ˘“‘¥À¥¶”¶∏√∞¸∫¨UCOSµƒ¥˙¬Î
-
-
-/*
-*********************************************************************************************************
-*                                         GLOBAL VARIABLES
-*********************************************************************************************************
-*/
-
-static OS_SEM 	*DispSem;  	//œ‘ æµƒ–≈∫≈¡ø
-static OS_SEM 	*EventSem;  
-
-static OS_SEM	*KeySem;  	//∞¥º¸–≈∫≈¡ø
-static int		KeyPressed;
-static char		KeyIsInited;
-
-/*
-*********************************************************************************************************
-*                                        TIMING FUNCTIONS
-*
-* Notes: Some timing dependent routines of uC/GUI require a GetTime and delay funtion. 
-*        Default time unit (tick), normally is 1 ms.
-*********************************************************************************************************
-*/
-int GUI_X_GetTime(void) { 
-	OS_ERR err;
-	return ((int)OSTimeGet(&err));   //ªÒ»°œµÕ≥ ±º‰,¥À¥¶ ±º‰µ•‘™Œ™1ms
-}
-
-//GUI—” ±∫Ø ˝
-void GUI_X_Delay(int period) { 
-	
-	OS_ERR err;
-	CPU_INT32U ticks;
-	ticks = (period * 1000) / OSCfg_TickRate_Hz;
-	OSTimeDly(ticks,OS_OPT_TIME_PERIODIC,&err);//UCOSIII—” ±≤…”√÷‹∆⁄ƒ£ Ω
-}
-
-/*
-*********************************************************************************************************
-*                                          GUI_X_ExecIdle()
-*********************************************************************************************************
-*/
-void GUI_X_ExecIdle(void)
-{
-	
-	GUI_X_Delay(1);
-	
-}
-
-/*
-*********************************************************************************************************
-*                                    MULTITASKING INTERFACE FUNCTIONS
-*
-* Note(1): 1) The following routines are required only if uC/GUI is used in a true multi task environment, 
-*             which means you have more than one thread using the uC/GUI API.  In this case the #define 
-*             GUI_OS 1   needs to be in GUIConf.h
-*********************************************************************************************************
-*/
-void GUI_X_InitOS(void)
-{
-	OS_ERR err;
-	//¥¥Ω®≥ı º÷µŒ™1µƒ–≈∫≈¡ø£¨”√”⁄π≤œÌ◊ ‘¥
-	OSSemCreate ((OS_SEM*	)DispSem,	
-                 (CPU_CHAR*	)"Disp_SEM",
-                 (OS_SEM_CTR)1,		
-                 (OS_ERR*	)&err);
-	//¥¥Ω®≥ı º÷µŒ™1µƒ–≈∫≈¡ø£¨”√”⁄ ¬º˛¥•∑¢
-	OSSemCreate ((OS_SEM*	)EventSem,	
-                 (CPU_CHAR*	)"Event_SEM",
-                 (OS_SEM_CTR)0,		
-                 (OS_ERR*	)&err);
-}
-
-//µ»¥˝–≈∫≈¡ø
-void GUI_X_Lock(void)
-{
-	OS_ERR err;
-	OSSemPend(DispSem,0,OS_OPT_PEND_BLOCKING,0,&err); 	//«Î«Û–≈∫≈¡ø
-}
-//∑¢ÀÕ–≈∫≈¡ø
-void GUI_X_Unlock(void)
-{
-	OS_ERR err;
-	OSSemPost(DispSem,OS_OPT_POST_1,&err);				//∑¢ÀÕ–≈∫≈¡ø
-}
-//∑≈ªÿ»ŒŒÒID£¨¥À¥¶∑µªÿµƒ «»ŒŒÒ”≈œ»º∂£¨”…”⁄UCOSIII÷ß≥÷ ±º‰∆¨
-//¬÷◊™µ˜∂»£¨“Ú¥À»Áπ˚ π”√¡À ±º‰∆¨¬÷◊™µ˜∂»π¶ƒ‹µƒª∞”–ø…ƒ‹ª·≥ˆ¥Ì£°
-U32 GUI_X_GetTaskId(void)
-{
-	return ((U32)(OSTCBCurPtr->Prio)); //ªÒ»°»ŒŒÒ”≈œ»º∂,“≤æÕ «»ŒŒÒID
-}
-
-/*
-*********************************************************************************************************
-*                                        GUI_X_WaitEvent()
-*                                        GUI_X_SignalEvent()
-*********************************************************************************************************
-*/
-
-void GUI_X_WaitEvent(void)
-{
-	OS_ERR err;
-	OSSemPend(EventSem,0,OS_OPT_PEND_BLOCKING,0,&err); 	//«Î«Û–≈∫≈¡ø
-}
-
-void GUI_X_SignalEvent(void)
-{
-	OS_ERR err;
-	OSSemPost(EventSem,OS_OPT_POST_1,&err);				//∑¢ÀÕ–≈∫≈¡ø
-}
-/*
-*********************************************************************************************************
-*                                      KEYBOARD INTERFACE FUNCTIONS
-*
-* Purpose: The keyboard routines are required only by some widgets.
-*          If widgets are not used, they may be eliminated.
-*
-* Note(s): If uC/OS-II is used, characters typed into the log window will be placed	in the keyboard buffer. 
-*          This is a neat feature which allows you to operate your target system without having to use or 
-*          even to have a keyboard connected to it. (useful for demos !)
-*********************************************************************************************************
-*/
-
-static void CheckInit(void)
-{
-	if(KeyIsInited == DEF_FALSE){
-		KeyIsInited = DEF_TRUE;
-		GUI_X_Init();
-	}
-}
-
-void GUI_X_Init(void)
-{
-	OS_ERR err;
-	//¥¥Ω®≥ı º÷µŒ™1µƒ–≈∫≈¡ø
-	OSSemCreate ((OS_SEM*	)KeySem,	
-                 (CPU_CHAR*	)"Key_SEM",
-                 (OS_SEM_CTR)0,		
-                 (OS_ERR*	)&err);	
-}
-
-int GUI_X_GetKey(void) 
-{
-	int r;
-	
-	r = KeyPressed;
-	CheckInit();
-	KeyPressed = 0;
-	return (r);
-}
-
-int GUI_X_WaitKey(void)
-{
-	int r;
-	OS_ERR err;
-	
-	CheckInit();
-	if(KeyPressed == 0)
-	{
-		OSSemPend(KeySem,0,OS_OPT_PEND_BLOCKING,0,&err); 	//«Î«Û–≈∫≈¡ø
-	}
-	r = KeyPressed;
-	KeyPressed = 0;
-	return (r);
-}
-
-void GUI_X_StoreKey(int k)
-{
-	OS_ERR err;
-	KeyPressed = k;
-	OSSemPost(KeySem,OS_OPT_POST_1,&err);				//∑¢ÀÕ–≈∫≈¡ø
-}
-
-/*********************************************************************
-*
-*      Logging: OS dependent
-
-Note:
-  Logging is used in higher debug levels only. The typical target
-  build does not use logging and does therefor not require any of
-  the logging routines below. For a release build without logging
-  the routines below may be eliminated to save some space.
-  (If the linker is not function aware and eliminates unreferenced
-  functions automatically)
-
-*/
-
-void GUI_X_Log     (const char *s) { GUI_USE_PARA(s); }
-void GUI_X_Warn    (const char *s) { GUI_USE_PARA(s); }
-void GUI_X_ErrorOut(const char *s) { GUI_USE_PARA(s); }
-
+#include "GUI.h"
+#include "includes.h" //Âõ†‰∏∫‰ΩøÁî®UCOSÊâÄ‰ª•Ê≠§Â§ÑÂ∫îËØ•ÂåÖÂê´UCOSÁöÑ‰ª£Á†Å
+
+
+/*
+*********************************************************************************************************
+*                                         GLOBAL VARIABLES
+*********************************************************************************************************
+*/
+
+static OS_SEM 	*DispSem;  	//ÊòæÁ§∫ÁöÑ‰ø°Âè∑Èáè
+static OS_SEM 	*EventSem;  
+
+static OS_SEM	*KeySem;  	//ÊåâÈîÆ‰ø°Âè∑Èáè
+static int		KeyPressed;
+static char		KeyIsInited;
+
+/*
+*********************************************************************************************************
+*                                        TIMING FUNCTIONS
+*
+* Notes: Some timing dependent routines of uC/GUI require a GetTime and delay funtion. 
+*        Default time unit (tick), normally is 1 ms.
+*********************************************************************************************************
+*/
+int GUI_X_GetTime(void) { 
+	OS_ERR err;
+	return ((int)OSTimeGet(&err));   //Ëé∑ÂèñÁ≥ªÁªüÊó∂Èó¥,Ê≠§Â§ÑÊó∂Èó¥ÂçïÂÖÉ‰∏∫1ms
+}
+
+//GUIÂª∂Êó∂ÂáΩÊï∞
+void GUI_X_Delay(int period) { 
+	
+	OS_ERR err;
+	CPU_INT32U ticks;
+	ticks = (period * 1000) / OSCfg_TickRate_Hz;
+	OSTimeDly(ticks,OS_OPT_TIME_PERIODIC,&err);//UCOSIIIÂª∂Êó∂ÈááÁî®Âë®ÊúüÊ®°Âºè
+}
+
+/*
+*********************************************************************************************************
+*                                          GUI_X_ExecIdle()
+*********************************************************************************************************
+*/
+void GUI_X_ExecIdle(void)
+{
+	
+	GUI_X_Delay(1);
+	
+}
+
+/*
+*********************************************************************************************************
+*                                    MULTITASKING INTERFACE FUNCTIONS
+*
+* Note(1): 1) The following routines are required only if uC/GUI is used in a true multi task environment, 
+*             which means you have more than one thread using the uC/GUI API.  In this case the #define 
+*             GUI_OS 1   needs to be in GUIConf.h
+*********************************************************************************************************
+*/
+void GUI_X_InitOS(void)
+{
+	OS_ERR err;
+	//ÂàõÂª∫ÂàùÂßãÂÄº‰∏∫1ÁöÑ‰ø°Âè∑ÈáèÔºåÁî®‰∫éÂÖ±‰∫´ËµÑÊ∫ê
+	OSSemCreate ((OS_SEM*	)DispSem,	
+                 (CPU_CHAR*	)"Disp_SEM",
+                 (OS_SEM_CTR)1,		
+                 (OS_ERR*	)&err);
+	//ÂàõÂª∫ÂàùÂßãÂÄº‰∏∫1ÁöÑ‰ø°Âè∑ÈáèÔºåÁî®‰∫é‰∫ã‰ª∂Ëß¶Âèë
+	OSSemCreate ((OS_SEM*	)EventSem,	
+                 (CPU_CHAR*	)"Event_SEM",
+                 (OS_SEM_CTR)0,		
+                 (OS_ERR*	)&err);
+}
+
+//Á≠âÂæÖ‰ø°Âè∑Èáè
+void GUI_X_Lock(void)
+{
+	OS_ERR err;
+	OSSemPend(DispSem,0,OS_OPT_PEND_BLOCKING,0,&err); 	//ËØ∑Ê±Ç‰ø°Âè∑Èáè
+}
+//ÂèëÈÄÅ‰ø°Âè∑Èáè
+void GUI_X_Unlock(void)
+{
+	OS_ERR err;
+	OSSemPost(DispSem,OS_OPT_POST_1,&err);				//ÂèëÈÄÅ‰ø°Âè∑Èáè
+}
+//ÊîæÂõû‰ªªÂä°IDÔºåÊ≠§Â§ÑËøîÂõûÁöÑÊòØ‰ªªÂä°‰ºòÂÖàÁ∫ßÔºåÁî±‰∫éUCOSIIIÊîØÊåÅÊó∂Èó¥Áâá
+//ËΩÆËΩ¨Ë∞ÉÂ∫¶ÔºåÂõ†Ê≠§Â¶ÇÊûú‰ΩøÁî®‰∫ÜÊó∂Èó¥ÁâáËΩÆËΩ¨Ë∞ÉÂ∫¶ÂäüËÉΩÁöÑËØùÊúâÂèØËÉΩ‰ºöÂá∫ÈîôÔºÅ
+U32 GUI_X_GetTaskId(void)
+{
+	return ((U32)(OSTCBCurPtr->Prio)); //Ëé∑Âèñ‰ªªÂä°‰ºòÂÖàÁ∫ß,‰πüÂ∞±ÊòØ‰ªªÂä°ID
+}
+
+/*
+*********************************************************************************************************
+*                                        GUI_X_WaitEvent()
+*                                        GUI_X_SignalEvent()
+*********************************************************************************************************
+*/
+
+void GUI_X_WaitEvent(void)
+{
+	OS_ERR err;
+	OSSemPend(EventSem,0,OS_OPT_PEND_BLOCKING,0,&err); 	//ËØ∑Ê±Ç‰ø°Âè∑Èáè
+}
+
+void GUI_X_SignalEvent(void)
+{
+	OS_ERR err;
+	OSSemPost(EventSem,OS_OPT_POST_1,&err);				//ÂèëÈÄÅ‰ø°Âè∑Èáè
+}
+/*
+*********************************************************************************************************
+*                                      KEYBOARD INTERFACE FUNCTIONS
+*
+* Purpose: The keyboard routines are required only by some widgets.
+*          If widgets are not used, they may be eliminated.
+*
+* Note(s): If uC/OS-II is used, characters typed into the log window will be placed	in the keyboard buffer. 
+*          This is a neat feature which allows you to operate your target system without having to use or 
+*          even to have a keyboard connected to it. (useful for demos !)
+*********************************************************************************************************
+*/
+
+static void CheckInit(void)
+{
+	if(KeyIsInited == DEF_FALSE){
+		KeyIsInited = DEF_TRUE;
+		GUI_X_Init();
+	}
+}
+
+void GUI_X_Init(void)
+{
+	OS_ERR err;
+	//ÂàõÂª∫ÂàùÂßãÂÄº‰∏∫1ÁöÑ‰ø°Âè∑Èáè
+	OSSemCreate ((OS_SEM*	)KeySem,	
+                 (CPU_CHAR*	)"Key_SEM",
+                 (OS_SEM_CTR)0,		
+                 (OS_ERR*	)&err);	
+}
+
+int GUI_X_GetKey(void) 
+{
+	int r;
+	
+	r = KeyPressed;
+	CheckInit();
+	KeyPressed = 0;
+	return (r);
+}
+
+int GUI_X_WaitKey(void)
+{
+	int r;
+	OS_ERR err;
+	
+	CheckInit();
+	if(KeyPressed == 0)
+	{
+		OSSemPend(KeySem,0,OS_OPT_PEND_BLOCKING,0,&err); 	//ËØ∑Ê±Ç‰ø°Âè∑Èáè
+	}
+	r = KeyPressed;
+	KeyPressed = 0;
+	return (r);
+}
+
+void GUI_X_StoreKey(int k)
+{
+	OS_ERR err;
+	KeyPressed = k;
+	OSSemPost(KeySem,OS_OPT_POST_1,&err);				//ÂèëÈÄÅ‰ø°Âè∑Èáè
+}
+
+/*********************************************************************
+*
+*      Logging: OS dependent
+
+Note:
+  Logging is used in higher debug levels only. The typical target
+  build does not use logging and does therefor not require any of
+  the logging routines below. For a release build without logging
+  the routines below may be eliminated to save some space.
+  (If the linker is not function aware and eliminates unreferenced
+  functions automatically)
+
+*/
+
+void GUI_X_Log     (const char *s) { GUI_USE_PARA(s); }
+void GUI_X_Warn    (const char *s) { GUI_USE_PARA(s); }
+void GUI_X_ErrorOut(const char *s) { GUI_USE_PARA(s); }
+

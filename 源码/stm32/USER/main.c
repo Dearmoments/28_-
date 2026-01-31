@@ -1,59 +1,59 @@
-#include "sys.h"
-#include "delay.h"
-#include "usart.h"
-#include "sram.h"
-#include "malloc.h"
-#include "ILI93xx.h"
-#include "led.h"
-#include "timer.h"
-#include "touch.h"
-#include "GUI.h"
-#include "GUIDemo.h"
-#include "includes.h"
-#include "StartupTask.h"
-#include "SPI.h"
-#include "DAC8560.h"
-
-int main(void)
-{
-	OS_ERR err;
-	CPU_SR_ALLOC();
-	delay_init(168);       	//ÑÓÊ±³õÊ¼»¯
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); 	//ÖĞ¶Ï·Ö×éÅäÖÃ
-	TFTLCD_Init();			//³õÊ¼»¯LCD
-	TP_Init();				//³õÊ¼»¯´¥ÃşÆÁ
-	LED_Init();   			//LED³õÊ¼»¯
-	FSMC_SRAM_Init(); 		//SRAM³õÊ¼»¯	
-	mem_init(SRAMIN); 		//ÄÚ²¿RAM³õÊ¼»¯
-	mem_init(SRAMEX); 		//Íâ²¿RAM³õÊ¼»¯
-	mem_init(SRAMCCM);		//CCM³õÊ¼»¯
-  
-  DAC8560_Init();
-  
-  
-	OSInit(&err);		//³õÊ¼»¯UCOSIII
-  
-	OS_CRITICAL_ENTER();//½øÈëÁÙ½çÇø
-	OSTaskCreate(
-		(OS_TCB 	* )&StartupTaskTCB,
-		(CPU_CHAR	* )"StartupTaskTCB",
-		(OS_TASK_PTR)StartupTask,
-		(void *)0,
-		(OS_PRIO)STARTUP_TASK_PRIO,
-		(CPU_STK *)START_TASK_STK,
-		(CPU_STK_SIZE)STARTUP_TASK_STK_SIZE/10,
-		(CPU_STK_SIZE)STARTUP_TASK_STK_SIZE,
-		(OS_MSG_QTY  )0,
-		(OS_TICK	  )0,	
-		(void   	* )0,
-		(OS_OPT      )OS_OPT_TASK_STK_CHK|OS_OPT_TASK_STK_CLR, //ÈÎÎñÑ¡Ïî
-		(OS_ERR 	* )&err
-	);
-	OS_CRITICAL_EXIT();	//ÍË³öÁÙ½çÇø	 
-	OSStart(&err);  //¿ªÆôUCOSIII
-  
-	printf("error!");
-	while(1);
-}
-
-
+#include "sys.h"
+#include "delay.h"
+#include "usart.h"
+#include "sram.h"
+#include "malloc.h"
+#include "ILI93xx.h"
+#include "led.h"
+#include "timer.h"
+#include "touch.h"
+#include "GUI.h"
+#include "GUIDemo.h"
+#include "includes.h"
+#include "StartupTask.h"
+#include "SPI.h"
+#include "DAC8560.h"
+
+int main(void)
+{
+	OS_ERR err;
+	CPU_SR_ALLOC();
+	delay_init(168);       	//å»¶æ—¶åˆå§‹åŒ–
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); 	//ä¸­æ–­åˆ†ç»„é…ç½®
+	TFTLCD_Init();			//åˆå§‹åŒ–LCD
+	TP_Init();				//åˆå§‹åŒ–è§¦æ‘¸å±
+	LED_Init();   			//LEDåˆå§‹åŒ–
+	FSMC_SRAM_Init(); 		//SRAMåˆå§‹åŒ–	
+	mem_init(SRAMIN); 		//å†…éƒ¨RAMåˆå§‹åŒ–
+	mem_init(SRAMEX); 		//å¤–éƒ¨RAMåˆå§‹åŒ–
+	mem_init(SRAMCCM);		//CCMåˆå§‹åŒ–
+  
+  DAC8560_Init();
+  
+  
+	OSInit(&err);		//åˆå§‹åŒ–UCOSIII
+  
+	OS_CRITICAL_ENTER();//è¿›å…¥ä¸´ç•ŒåŒº
+	OSTaskCreate(
+		(OS_TCB 	* )&StartupTaskTCB,
+		(CPU_CHAR	* )"StartupTaskTCB",
+		(OS_TASK_PTR)StartupTask,
+		(void *)0,
+		(OS_PRIO)STARTUP_TASK_PRIO,
+		(CPU_STK *)START_TASK_STK,
+		(CPU_STK_SIZE)STARTUP_TASK_STK_SIZE/10,
+		(CPU_STK_SIZE)STARTUP_TASK_STK_SIZE,
+		(OS_MSG_QTY  )0,
+		(OS_TICK	  )0,	
+		(void   	* )0,
+		(OS_OPT      )OS_OPT_TASK_STK_CHK|OS_OPT_TASK_STK_CLR, //ä»»åŠ¡é€‰é¡¹
+		(OS_ERR 	* )&err
+	);
+	OS_CRITICAL_EXIT();	//é€€å‡ºä¸´ç•ŒåŒº	 
+	OSStart(&err);  //å¼€å¯UCOSIII
+  
+	printf("error!");
+	while(1);
+}
+
+

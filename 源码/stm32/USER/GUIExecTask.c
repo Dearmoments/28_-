@@ -1,22 +1,22 @@
-#include "GUIExecTask.h"
-
-/***ÈÎÎñ¿ØÖÆ¿é******************************************************/
-CPU_STK GUIEXEC_TASK_STK[GUIEXEC_TASK_STK_SIZE];
-OS_TCB 	GUIExecTaskTCB;
-
-/********************************************************************
-º¯ÊýÔ­ÐÍ:void GUIExecTask(void *arg)
-¹¦ÄÜ:Ö´ÐÐGUI¸üÐÂº¯Êý
-ÊäÈë²ÎÊý:
-  void *arg:ÈÎÎñ²ÎÊý,±£ÁôÎ´ÓÃ
-·µ»ØÖµ:ÎÞ
-*******************************************************************/
-void GUIExecTask(void *arg)
-{
-  OS_ERR err;
-	while(1)
-  {
-    GUI_Exec();
-    OSTimeDly(10,OS_OPT_TIME_DLY,&err);
-  }
-}
+#include "GUIExecTask.h"
+
+/***ä»»åŠ¡æŽ§åˆ¶å—******************************************************/
+CPU_STK GUIEXEC_TASK_STK[GUIEXEC_TASK_STK_SIZE];
+OS_TCB 	GUIExecTaskTCB;
+
+/********************************************************************
+å‡½æ•°åŽŸåž‹:void GUIExecTask(void *arg)
+åŠŸèƒ½:æ‰§è¡ŒGUIæ›´æ–°å‡½æ•°
+è¾“å…¥å‚æ•°:
+  void *arg:ä»»åŠ¡å‚æ•°,ä¿ç•™æœªç”¨
+è¿”å›žå€¼:æ— 
+*******************************************************************/
+void GUIExecTask(void *arg)
+{
+  OS_ERR err;
+	while(1)
+  {
+    GUI_Exec();
+    OSTimeDly(10,OS_OPT_TIME_DLY,&err);
+  }
+}

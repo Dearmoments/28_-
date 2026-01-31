@@ -1,18 +1,18 @@
-#ifndef __GUIEXECTASK_H
-#define __GUIEXECTASK_H
-
-#include "includes.h"
-#include "GUI.h"
-
-/*ÈÎÎñÓÅÏÈ¼¶*/
-#define GUIEXEC_TASK_PRIO							10
-/*ÈÎÎñ¶ÑÕ»´óĞ¡*/
-#define GUIEXEC_TASK_STK_SIZE 				1024
-/*ÈÎÎñ¿ØÖÆ¿é*/
-extern OS_TCB 	GUIExecTaskTCB;
-/*ÈÎÎñ¶ÑÕ»*/
-extern CPU_STK GUIEXEC_TASK_STK[GUIEXEC_TASK_STK_SIZE];
-
-extern void GUIExecTask(void *arg);
-
-#endif
+#ifndef __GUIEXECTASK_H
+#define __GUIEXECTASK_H
+
+#include "includes.h"
+#include "GUI.h"
+
+/*ä»»åŠ¡ä¼˜å…ˆçº§*/
+#define GUIEXEC_TASK_PRIO							10
+/*ä»»åŠ¡å †æ ˆå¤§å°*/
+#define GUIEXEC_TASK_STK_SIZE 				1024
+/*ä»»åŠ¡æ§åˆ¶å—*/
+extern OS_TCB 	GUIExecTaskTCB;
+/*ä»»åŠ¡å †æ ˆ*/
+extern CPU_STK GUIEXEC_TASK_STK[GUIEXEC_TASK_STK_SIZE];
+
+extern void GUIExecTask(void *arg);
+
+#endif

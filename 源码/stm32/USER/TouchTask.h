@@ -1,25 +1,25 @@
-#ifndef __TOUCHTASK_H
-#define __TOUCHTASK_H
-
-#include "includes.h"
-#include "GUIExecTask.h"
-
-#include "GUI.h"
-#include "WM.h"
-#include "DIALOG.h"
-#include "BUTTON.h"
-
-/*ÈÎÎñÓÅÏÈ¼¶*/
-#define TOUCH_TASK_PRIO				      4
-/*ÈÎÎñ¶ÑÕ»´óĞ¡*/
-#define TOUCH_TASK_STK_SIZE 				1024
-/*ÈÎÎñ¿ØÖÆ¿é*/
-extern OS_TCB TouchTaskTCB;
-
-/*ÈÎÎñ¶ÑÕ»*/
-extern CPU_STK TOUCH_TASK_STK[TOUCH_TASK_STK_SIZE];
-
-
-extern void TouchTask(void *p_arg);
-
-#endif
+#ifndef __TOUCHTASK_H
+#define __TOUCHTASK_H
+
+#include "includes.h"
+#include "GUIExecTask.h"
+
+#include "GUI.h"
+#include "WM.h"
+#include "DIALOG.h"
+#include "BUTTON.h"
+
+/*ä»»åŠ¡ä¼˜å…ˆçº§*/
+#define TOUCH_TASK_PRIO				      4
+/*ä»»åŠ¡å †æ ˆå¤§å°*/
+#define TOUCH_TASK_STK_SIZE 				1024
+/*ä»»åŠ¡æ§åˆ¶å—*/
+extern OS_TCB TouchTaskTCB;
+
+/*ä»»åŠ¡å †æ ˆ*/
+extern CPU_STK TOUCH_TASK_STK[TOUCH_TASK_STK_SIZE];
+
+
+extern void TouchTask(void *p_arg);
+
+#endif

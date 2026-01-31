@@ -1,34 +1,34 @@
-#ifndef _MYIIC_H
-#define _MYIIC_H
-#include "sys.h"
-//////////////////////////////////////////////////////////////////////////////////	 
-//±¾³ÌÐòÖ»¹©Ñ§Ï°Ê¹ÓÃ£¬Î´¾­×÷ÕßÐí¿É£¬²»µÃÓÃÓÚÆäËüÈÎºÎÓÃÍ¾
-//ALIENTEK STM32F407¿ª·¢°å
-//IIC Çý¶¯´úÂë	   
-//ÕýµãÔ­×Ó@ALIENTEK
-//¼¼ÊõÂÛÌ³:www.openedv.com
-//´´½¨ÈÕÆÚ:2014/7/16
-//°æ±¾£ºV1.0
-//°æÈ¨ËùÓÐ£¬µÁ°æ±Ø¾¿¡£
-//Copyright(C) ¹ãÖÝÊÐÐÇÒíµç×Ó¿Æ¼¼ÓÐÏÞ¹«Ë¾ 2014-2024
-//All rights reserved									  
-////////////////////////////////////////////////////////////////////////////////// 	
-
-//IO·½ÏòÉèÖÃ
-#define SDA_IN() 		{GPIOB->MODER&=~(3<<(9*2));GPIOB->MODER|=0<<9*2;}	//PB9ÊäÈëÄ£Ê½
-#define SDA_OUT()  	{GPIOB->MODER&=~(3<<(9*2));GPIOB->MODER|=1<<9*2;} //PB9Êä³öÄ£Ê½
-//IO²Ù×÷º¯Êý	 
-#define IIC_SCL		PBout(8) //SCL
-#define IIC_SDA		PBout(9) //SDA
-#define READ_SDA	PBin(9)  //ÊäÈëSDA
-
-void IIC_Init(void);
-void IIC_Start(void);
-void IIC_Stop(void);
-u8 IIC_Wait_Ack(void);
-void IIC_Ack(void);
-void IIC_NAck(void);
-void IIC_Send_Byte(u8 txd);
-u8 IIC_Read_Byte(unsigned char ack);
-
-#endif
+#ifndef _MYIIC_H
+#define _MYIIC_H
+#include "sys.h"
+//////////////////////////////////////////////////////////////////////////////////	 
+//æœ¬ç¨‹åºåªä¾›å­¦ä¹ ä½¿ç”¨ï¼Œæœªç»ä½œè€…è®¸å¯ï¼Œä¸å¾—ç”¨äºŽå…¶å®ƒä»»ä½•ç”¨é€”
+//ALIENTEK STM32F407å¼€å‘æ¿
+//IIC é©±åŠ¨ä»£ç 	   
+//æ­£ç‚¹åŽŸå­@ALIENTEK
+//æŠ€æœ¯è®ºå›:www.openedv.com
+//åˆ›å»ºæ—¥æœŸ:2014/7/16
+//ç‰ˆæœ¬ï¼šV1.0
+//ç‰ˆæƒæ‰€æœ‰ï¼Œç›—ç‰ˆå¿…ç©¶ã€‚
+//Copyright(C) å¹¿å·žå¸‚æ˜Ÿç¿¼ç”µå­ç§‘æŠ€æœ‰é™å…¬å¸ 2014-2024
+//All rights reserved									  
+////////////////////////////////////////////////////////////////////////////////// 	
+
+//IOæ–¹å‘è®¾ç½®
+#define SDA_IN() 		{GPIOB->MODER&=~(3<<(9*2));GPIOB->MODER|=0<<9*2;}	//PB9è¾“å…¥æ¨¡å¼
+#define SDA_OUT()  	{GPIOB->MODER&=~(3<<(9*2));GPIOB->MODER|=1<<9*2;} //PB9è¾“å‡ºæ¨¡å¼
+//IOæ“ä½œå‡½æ•°	 
+#define IIC_SCL		PBout(8) //SCL
+#define IIC_SDA		PBout(9) //SDA
+#define READ_SDA	PBin(9)  //è¾“å…¥SDA
+
+void IIC_Init(void);
+void IIC_Start(void);
+void IIC_Stop(void);
+u8 IIC_Wait_Ack(void);
+void IIC_Ack(void);
+void IIC_NAck(void);
+void IIC_Send_Byte(u8 txd);
+u8 IIC_Read_Byte(unsigned char ack);
+
+#endif

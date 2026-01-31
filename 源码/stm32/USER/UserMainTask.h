@@ -1,45 +1,45 @@
-#ifndef __MAINTASK_H
-#define __MAINTASK_H
-
-#include "includes.h"
-#include "GUIExecTask.h"
-
-#include "GUI.h"
-#include "WM.h"
-#include "DIALOG.h"
-#include "BUTTON.h"
-
-#include "EquSampMod.h"
-#include "FreAndDutyCmd.h"
-
-#define SAMP_PERIOD                     (1.0/300e6*1e9)
-
-/*»ŒŒÒ”≈œ»º∂*/
-#define USER_MAIN_TASK_PRIO				      11
-/*»ŒŒÒ∂—’ª¥Û–°*/
-#define USER_MAIN_TASK_STK_SIZE 				1024
-/*»ŒŒÒøÿ÷∆øÈ*/
-extern OS_TCB UserMainTaskTCB;
-
-
-typedef struct
-{
-  double frequency;
-  double dutyRatio;
-  double amplitude;
-  double riseTime;
-  double fallTime;
-  WM_HWIN hListView;
-  WM_HWIN hGraph;
-  uint32_t runEN:1;
-}GlobalType;
-extern GlobalType Global;
-
-/*»ŒŒÒ∂—’ª*/
-extern CPU_STK USER_MAIN_TASK_STK[USER_MAIN_TASK_STK_SIZE];
-
-extern WM_HWIN CreatePulseParameterMeasurement(void);
-
-extern void UserMainTask(void *p_arg);
-
-#endif
+#ifndef __MAINTASK_H
+#define __MAINTASK_H
+
+#include "includes.h"
+#include "GUIExecTask.h"
+
+#include "GUI.h"
+#include "WM.h"
+#include "DIALOG.h"
+#include "BUTTON.h"
+
+#include "EquSampMod.h"
+#include "FreAndDutyCmd.h"
+
+#define SAMP_PERIOD                     (1.0/300e6*1e9)
+
+/*‰ªªÂä°‰ºòÂÖàÁ∫ß*/
+#define USER_MAIN_TASK_PRIO				      11
+/*‰ªªÂä°Â†ÜÊ†àÂ§ßÂ∞è*/
+#define USER_MAIN_TASK_STK_SIZE 				1024
+/*‰ªªÂä°ÊéßÂà∂Âùó*/
+extern OS_TCB UserMainTaskTCB;
+
+
+typedef struct
+{
+  double frequency;
+  double dutyRatio;
+  double amplitude;
+  double riseTime;
+  double fallTime;
+  WM_HWIN hListView;
+  WM_HWIN hGraph;
+  uint32_t runEN:1;
+}GlobalType;
+extern GlobalType Global;
+
+/*‰ªªÂä°Â†ÜÊ†à*/
+extern CPU_STK USER_MAIN_TASK_STK[USER_MAIN_TASK_STK_SIZE];
+
+extern WM_HWIN CreatePulseParameterMeasurement(void);
+
+extern void UserMainTask(void *p_arg);
+
+#endif

@@ -1,64 +1,64 @@
-#ifndef __DELAY_H
-#define __DELAY_H 			   
-#include <sys.h>	  
-//////////////////////////////////////////////////////////////////////////////////  
-//±¾³ÌĞòÖ»¹©Ñ§Ï°Ê¹ÓÃ£¬Î´¾­×÷ÕßĞí¿É£¬²»µÃÓÃÓÚÆäËüÈÎºÎÓÃÍ¾
-//ALIENTEK STM32F407¿ª·¢°å
-//Ê¹ÓÃSysTickµÄÆÕÍ¨¼ÆÊıÄ£Ê½¶ÔÑÓ³Ù½øĞĞ¹ÜÀí(Ö§³Öucosii)
-//°üÀ¨delay_us,delay_ms
-//ÕıµãÔ­×Ó@ALIENTEK
-//¼¼ÊõÂÛÌ³:www.openedv.com
-//´´½¨ÈÕÆÚ:2014/5/2
-//°æ±¾£ºV1.3
-//°æÈ¨ËùÓĞ£¬µÁ°æ±Ø¾¿¡£
-//Copyright(C) ¹ãÖİÊĞĞÇÒíµç×Ó¿Æ¼¼ÓĞÏŞ¹«Ë¾ 2014-2024
-//All rights reserved
-//********************************************************************************
-//ĞŞ¸ÄËµÃ÷
-//V1.1 20140803 
-//1,delay_us,Ìí¼Ó²ÎÊıµÈÓÚ0ÅĞ¶Ï,Èç¹û²ÎÊıµÈÓÚ0,ÔòÖ±½ÓÍË³ö. 
-//2,ĞŞ¸ÄucosiiÏÂ,delay_msº¯Êı,¼ÓÈëOSLockNestingµÄÅĞ¶Ï,ÔÚ½øÈëÖĞ¶Ïºó,Ò²¿ÉÒÔ×¼È·ÑÓÊ±.
-//V1.2 20150411  
-//ĞŞ¸ÄOSÖ§³Ö·½Ê½,ÒÔÖ§³ÖÈÎÒâOS(²»ÏŞÓÚUCOSIIºÍUCOSIII,ÀíÂÛÉÏÈÎÒâOS¶¼¿ÉÒÔÖ§³Ö)
-//Ìí¼Ó:delay_osrunning/delay_ostickspersec/delay_osintnestingÈı¸öºê¶¨Òå
-//Ìí¼Ó:delay_osschedlock/delay_osschedunlock/delay_ostimedlyÈı¸öº¯Êı
-//V1.3 20150521
-//ĞŞÕıUCOSIIIÖ§³ÖÊ±µÄ2¸öbug£º
-//delay_tickspersec¸ÄÎª£ºdelay_ostickspersec
-//delay_intnesting¸ÄÎª£ºdelay_osintnesting
-////////////////////////////////////////////////////////////////////////////////// 
-
-void delay_init(u8 SYSCLK);
-void delay_ms(u16 nms);
-void delay_us(u32 nus);
-
-#endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#ifndef __DELAY_H
+#define __DELAY_H 			   
+#include <sys.h>	  
+//////////////////////////////////////////////////////////////////////////////////  
+//æœ¬ç¨‹åºåªä¾›å­¦ä¹ ä½¿ç”¨ï¼Œæœªç»ä½œè€…è®¸å¯ï¼Œä¸å¾—ç”¨äºå…¶å®ƒä»»ä½•ç”¨é€”
+//ALIENTEK STM32F407å¼€å‘æ¿
+//ä½¿ç”¨SysTickçš„æ™®é€šè®¡æ•°æ¨¡å¼å¯¹å»¶è¿Ÿè¿›è¡Œç®¡ç†(æ”¯æŒucosii)
+//åŒ…æ‹¬delay_us,delay_ms
+//æ­£ç‚¹åŸå­@ALIENTEK
+//æŠ€æœ¯è®ºå›:www.openedv.com
+//åˆ›å»ºæ—¥æœŸ:2014/5/2
+//ç‰ˆæœ¬ï¼šV1.3
+//ç‰ˆæƒæ‰€æœ‰ï¼Œç›—ç‰ˆå¿…ç©¶ã€‚
+//Copyright(C) å¹¿å·å¸‚æ˜Ÿç¿¼ç”µå­ç§‘æŠ€æœ‰é™å…¬å¸ 2014-2024
+//All rights reserved
+//********************************************************************************
+//ä¿®æ”¹è¯´æ˜
+//V1.1 20140803 
+//1,delay_us,æ·»åŠ å‚æ•°ç­‰äº0åˆ¤æ–­,å¦‚æœå‚æ•°ç­‰äº0,åˆ™ç›´æ¥é€€å‡º. 
+//2,ä¿®æ”¹ucosiiä¸‹,delay_mså‡½æ•°,åŠ å…¥OSLockNestingçš„åˆ¤æ–­,åœ¨è¿›å…¥ä¸­æ–­å,ä¹Ÿå¯ä»¥å‡†ç¡®å»¶æ—¶.
+//V1.2 20150411  
+//ä¿®æ”¹OSæ”¯æŒæ–¹å¼,ä»¥æ”¯æŒä»»æ„OS(ä¸é™äºUCOSIIå’ŒUCOSIII,ç†è®ºä¸Šä»»æ„OSéƒ½å¯ä»¥æ”¯æŒ)
+//æ·»åŠ :delay_osrunning/delay_ostickspersec/delay_osintnestingä¸‰ä¸ªå®å®šä¹‰
+//æ·»åŠ :delay_osschedlock/delay_osschedunlock/delay_ostimedlyä¸‰ä¸ªå‡½æ•°
+//V1.3 20150521
+//ä¿®æ­£UCOSIIIæ”¯æŒæ—¶çš„2ä¸ªbugï¼š
+//delay_tickspersecæ”¹ä¸ºï¼šdelay_ostickspersec
+//delay_intnestingæ”¹ä¸ºï¼šdelay_osintnesting
+////////////////////////////////////////////////////////////////////////////////// 
+
+void delay_init(u8 SYSCLK);
+void delay_ms(u16 nms);
+void delay_us(u32 nus);
+
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
